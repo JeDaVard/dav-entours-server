@@ -1,7 +1,9 @@
 <component name="ProjectDictionaryState">
   <dictionary name="davitvardanyan">
     <words>
+      <w>bcrypt</w>
       <w>dotenv</w>
+      <w>multer</w>
     </words>
   </dictionary>
 </component>
