@@ -4,6 +4,7 @@
       <w>bcrypt</w>
       <w>dotenv</w>
       <w>multer</w>
+      <w>slugify</w>
     </words>
   </dictionary>
 </component>

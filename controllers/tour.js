@@ -222,7 +222,15 @@ exports.getDistance = catchAsync(async (req, res, next) => {
     });
 });
 
-exports.getTours = handleFactory.getAll(Tour);
+
+
+exports.setUserId = (req, res, next) => {
+    // Allow nested routes
+    if (!req.body.author) req.body.author = req.user.id;
+    next()
+};
+
+exports.getTours = handleFactory.getAll(Tour, {path: 'author'});
 exports.getTour = handleFactory.getOne(Tour, { path: 'reviews' });
 exports.addNewTour = handleFactory.createOne(Tour);
 exports.editTour = handleFactory.updateOne(Tour);

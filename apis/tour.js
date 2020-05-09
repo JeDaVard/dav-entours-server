@@ -29,6 +29,7 @@ router
     .post(
         authController.auth,
         authController.restrictTo('admin', 'guide', 'user'),
+        tourControllers.setUserId,
         tourControllers.addNewTour
     );
 

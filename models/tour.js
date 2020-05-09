@@ -9,6 +9,10 @@ const tourSchema = new mongoose.Schema(
             required: [true, 'A tour must have a name'],
             unique: true,
         },
+        author: {
+            type: mongoose.Schema.ObjectId,
+            ref: 'User'
+        },
         slug: String,
         summary: {
             type: String,
