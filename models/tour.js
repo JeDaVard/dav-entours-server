@@ -56,10 +56,6 @@ const tourSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
-        createdAt: {
-            type: Date,
-            default: Date.now(),
-        },
         startDates: [Date],
         startLocation: {
             // GeoJSON
@@ -95,6 +91,7 @@ const tourSchema = new mongoose.Schema(
     {
         toJSON: { virtuals: true },
         toObject: { virtuals: true },
+        timestamps: true
     }
 );
 

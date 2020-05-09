@@ -25,10 +25,20 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'default.jpg'
     },
+    reviews: {
+        type: [mongoose.Schema.ObjectId]
+    },
+    tours: {
+      type: [mongoose.Schema.ObjectId]
+    },
     role: {
         type: String,
         enum: ['user', 'guide', 'admin'],
         default: 'user',
+    },
+    speaks: {
+      type: [String],
+      default: ['Not specified']
     },
     passwordChangedAt: Date,
     passwordResetToken: String,
@@ -38,6 +48,8 @@ const userSchema = new mongoose.Schema({
         default: true,
         select: false
     }
+}, {
+    timestamps: true
 });
 
 userSchema.pre('save', async function (next) {
