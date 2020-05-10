@@ -34,7 +34,7 @@ router
     );
 
 router
-    .route('/:id')
+    .route('/:slug')
     .get(tourControllers.getTour)
     .patch(
         authController.auth,

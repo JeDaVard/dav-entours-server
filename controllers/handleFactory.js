@@ -3,11 +3,17 @@ const catchAsync = require('../utils/catchAsync');
 const APIFeatures = require('../utils/apiFeatures');
 
 
-exports.deleteOne = Model => catchAsync(async (req, res, next) => {
+exports.deleteOne = (Model, isSlug) => catchAsync(async (req, res, next) => {
     const _id = req.params.id;
-    const doc = await Model.findByIdAndDelete(_id);
+    let doc;
+    if (isSlug) {
+        const slug = req.params.slug;
+        doc = await Model.deleteOne({slug})
+    } else {
+        doc = await Model.findByIdAndDelete(_id);
+    }
 
-    if (!doc) return next(new AppError('Not found that id', 404));
+    if (!doc) return next(new AppError('Resource not found', 404));
 
     res.status(200).json({
         status: 'success',
@@ -15,12 +21,19 @@ exports.deleteOne = Model => catchAsync(async (req, res, next) => {
     });
 })
 
-exports.updateOne = Model => catchAsync(async (req, res, next) => {
+exports.updateOne = (Model, isSlug) => catchAsync(async (req, res, next) => {
     const updates = req.body;
     // console.log(req.formData)
 
     const _id = req.params.id;
-    const doc = await Model.findByIdAndUpdate(_id, updates, {new: true});
+
+    let doc;
+    if (isSlug) {
+        const slug = req.params.slug;
+        doc = await Model.updateOne({slug}, updates);
+    } else {
+        doc = await Model.findByIdAndUpdate(_id, updates, {new: true});
+    }
 
     if (!doc) return next(new AppError('Not found that id', 404));
 
@@ -44,9 +57,11 @@ exports.createOne = Model => catchAsync(async (req, res, next) => {
     });
 });
 
-exports.getOne = (Model, populateOptions) => catchAsync(async (req, res, next) => {
+exports.getOne = (Model, isSlug, populateOptions) => catchAsync(async (req, res, next) => {
     const _id = req.params.id;
-    let query = Model.findOne({ _id });
+    const slug = isSlug ? req.params.slug : null;
+
+    let query = isSlug ? Model.findOne({ slug }) : Model.findOne({ _id });
 
     if (populateOptions) query = query.populate(populateOptions);
 

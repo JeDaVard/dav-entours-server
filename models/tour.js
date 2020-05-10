@@ -6,14 +6,16 @@ const tourSchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            required: [true, 'A tour must have a name'],
-            unique: true,
+            required: [true, 'A tour must have a name']
         },
         author: {
             type: mongoose.Schema.ObjectId,
             ref: 'User'
         },
-        slug: String,
+        slug: {
+            type: String,
+            unique: true
+        },
         summary: {
             type: String,
             trim: true,
@@ -137,7 +139,7 @@ tourSchema.virtual('reviews', {
 });
 
 tourSchema.pre('save', function (next) {
-    this.slug = slugify(this.name, { lower: true });
+    this.slug = slugify(this._id.toString().slice(18) + '-' + this.name, { lower: true });
     next();
 });
 

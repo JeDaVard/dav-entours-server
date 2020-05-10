@@ -3,54 +3,61 @@ const validator = require('validator');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 
-const userSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: [true, 'Please, provide your name'],
+const userSchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+            required: [true, 'Please, provide your name'],
+        },
+        email: {
+            type: String,
+            required: [true, 'Please, provide your email'],
+            unique: true,
+            lowercase: true,
+            validate: [validator.isEmail, 'Please, provide a valid email'],
+        },
+        password: {
+            type: String,
+            required: [true, 'Please, write a password'],
+            minlength: 8,
+            select: false,
+        },
+        photo: {
+            type: String,
+            default: 'default.jpg',
+        },
+        reviews: {
+            type: [mongoose.Schema.ObjectId],
+            ref: 'Review'
+        },
+        tours: [
+            {
+                type: mongoose.Schema.ObjectId,
+                ref: 'Tour'
+            }
+        ],
+        role: {
+            type: String,
+            enum: ['user', 'guide', 'admin'],
+            default: 'user',
+        },
+        speaks: {
+            type: [String],
+            default: ['Not specified'],
+        },
+        passwordChangedAt: Date,
+        passwordResetToken: String,
+        passwordResetExpires: Date,
+        active: {
+            type: Boolean,
+            default: true,
+            select: false,
+        },
     },
-    email: {
-        type: String,
-        required: [true, 'Please, provide your email'],
-        unique: true,
-        lowercase: true,
-        validate: [validator.isEmail, 'Please, provide a valid email'],
-    },
-    password: {
-        type: String,
-        required: [true, 'Please, write a password'],
-        minlength: 8,
-        select: false,
-    },
-    photo: {
-        type: String,
-        default: 'default.jpg'
-    },
-    reviews: {
-        type: [mongoose.Schema.ObjectId]
-    },
-    tours: {
-      type: [mongoose.Schema.ObjectId]
-    },
-    role: {
-        type: String,
-        enum: ['user', 'guide', 'admin'],
-        default: 'user',
-    },
-    speaks: {
-      type: [String],
-      default: ['Not specified']
-    },
-    passwordChangedAt: Date,
-    passwordResetToken: String,
-    passwordResetExpires: Date,
-    active: {
-        type: Boolean,
-        default: true,
-        select: false
+    {
+        timestamps: true,
     }
-}, {
-    timestamps: true
-});
+);
 
 userSchema.pre('save', async function (next) {
     // Only run this function if password was modified
@@ -64,8 +71,8 @@ userSchema.pre('save', function (next) {
     if (!this.isModified('password') || this.isNew) return next();
 
     this.passwordChangedAt = Date.now() - 1000;
-    next()
-})
+    next();
+});
 
 userSchema.methods.correctPassword = async function (password, dbPassword) {
     return await bcrypt.compare(password, dbPassword);
@@ -85,21 +92,22 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
     return false;
 };
 
-
 userSchema.methods.createPasswordResetToken = function () {
     const resetToken = crypto.randomBytes(32).toString('hex');
 
-    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    this.passwordResetToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
     this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
-
-    return resetToken
+    return resetToken;
 };
 
-userSchema.pre(/^find/, function(next) {
-    this.find({ active: {$ne: false} })
-    next()
-})
+userSchema.pre(/^find/, function (next) {
+    this.find({ active: { $ne: false } });
+    next();
+});
 
 const User = mongoose.model('User', userSchema);
 

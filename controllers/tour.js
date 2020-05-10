@@ -230,8 +230,9 @@ exports.setUserId = (req, res, next) => {
     next()
 };
 
+const isSlug = true;
 exports.getTours = handleFactory.getAll(Tour, {path: 'author'});
-exports.getTour = handleFactory.getOne(Tour, { path: 'reviews' });
 exports.addNewTour = handleFactory.createOne(Tour);
-exports.editTour = handleFactory.updateOne(Tour);
-exports.removeTour = handleFactory.deleteOne(Tour);
+exports.getTour = handleFactory.getOne(Tour, isSlug, { path: 'reviews' });
+exports.editTour = handleFactory.updateOne(Tour, isSlug);
+exports.removeTour = handleFactory.deleteOne(Tour, isSlug);
