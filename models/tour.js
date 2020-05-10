@@ -17,6 +17,13 @@ const tourSchema = new mongoose.Schema(
             unique: true
         },
         hashtags: [String],
+        participants: [
+            {
+                type: mongoose.Schema.ObjectId,
+                ref: 'User',
+                // unique: [true, 'You can\'t participate twice at a same time, please, choose another date or invite the second participant']
+            }
+        ],
         summary: {
             type: String,
             trim: true,
