@@ -16,6 +16,7 @@ const tourSchema = new mongoose.Schema(
             type: String,
             unique: true
         },
+        hashtags: [String],
         summary: {
             type: String,
             trim: true,
@@ -140,6 +141,12 @@ tourSchema.virtual('reviews', {
 
 tourSchema.pre('save', function (next) {
     this.slug = slugify(this._id.toString().slice(18) + '-' + this.name, { lower: true });
+    next();
+});
+
+tourSchema.pre('save', function (next) {
+    this.hashtags = this.hashtags.concat(this.name.split(' ').filter(hash => hash.length > 3))
+
     next();
 });
 
