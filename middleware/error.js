@@ -33,10 +33,10 @@ const errDev = (err, req, res) => {
         })
     }
     // Error on rendered website
-    res.status(err.statusCode).render('error', {
-        title: 'Something went wrong!',
-        msg: err.message
-    })
+    // res.status(err.statusCode).render('error', {
+    //     title: 'Something went wrong!',
+    //     msg: err.message
+    // })
 }
 
 const errProd = (err, req, res) => {
@@ -58,10 +58,10 @@ const errProd = (err, req, res) => {
         }
     }
     // For rendered template
-    return res.status(err.statusCode).render('error', {
-        title: 'Something went wrong!',
-        msg: 'Please, try later :)'
-    })
+    // return res.status(err.statusCode).render('error', {
+    //     title: 'Something went wrong!',
+    //     msg: 'Please, try later :)'
+    // })
 }
 
 module.exports = (err, req, res, next) => {

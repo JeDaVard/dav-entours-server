@@ -31,7 +31,6 @@ app.use(express.json({ limit: '20kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(express.static(path.join(__dirname, 'static')));
 
-
 // APIs
 app.use('/api/tour', tourAPI);
 app.use('/api/user', userAPI);
