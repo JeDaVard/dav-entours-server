@@ -88,7 +88,7 @@ exports.removeUser = catchAsync(async (req, res) => {
 
 
 exports.getUsers = handleFactory.getAll(User, { path: 'tours' })
-exports.getUser = handleFactory.getOne(User, null, {path: 'tours reviews'});
+exports.getUser = handleFactory.getOne(User, null, {path: 'tours reviews', populate: { path: 'reviews'}});
 exports.createUser = handleFactory.createOne(User);
 // Do not change the password by this method
 exports.editUser = handleFactory.updateOne(User);
