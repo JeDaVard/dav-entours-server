@@ -231,7 +231,7 @@ exports.setUserId = (req, res, next) => {
 };
 
 const isSlug = true;
-exports.getTours = handleFactory.getAll(Tour, {path: 'author reviews participants'});
+exports.getTours = handleFactory.getAll(Tour, {path: 'author reviews participants', populate: { path: 'author'}});
 exports.addNewTour = handleFactory.createOne(Tour);
 exports.getTour = handleFactory.getOne(Tour, isSlug, { path: 'reviews author participants' });
 exports.editTour = handleFactory.updateOne(Tour, isSlug);
