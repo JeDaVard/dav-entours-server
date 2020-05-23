@@ -30,38 +30,46 @@ exports.uploadTourImages = upload.fields([
     },
     {
         name: 'images',
-        maxCount: 3,
+        maxCount: 8,
     },
 ]);
 
 exports.resizeTourImages = catchAsync(async (req, res, next) => {
+    if (!req.files) return next();
+
     if (req.files.imageCover) {
-        req.body.imageCover = `tour-cover-${req.params.id}-${Date.now()}.jpeg`;
+        req.body.imageCover = `tour-cover-${req.params.slug}-${Date.now()}.jpeg`;
+        const thumbnail = `${req.body.imageCover.slice(0, req.body.imageCover.length - 5)}.thumb.jpeg`;
+
         await sharp(req.files.imageCover[0].buffer)
             .resize(2000, 1333)
             .toFormat('jpeg')
             .jpeg({ quality: 90 })
-            .toFile(`public/img/tours/${req.body.imageCover}`);
-    }
+            .toFile(`static/images/tour/${req.body.imageCover}`)
+
+        await sharp(req.files.imageCover[0].buffer)
+            .resize(200, 133)
+            .toFormat('jpeg')
+            .jpeg({quality: 60})
+            .toFile(`static/images/tour/${thumbnail}`)
+        }
 
     if (req.files.images) {
         req.body.images = [];
         await Promise.all(
             req.files.images.map(async (file, index) => {
-                const fileName = `tour-image-${req.params.id}-${Date.now()}-${index + 1}.jpeg`;
+                const fileName = `tour-image-${req.params.slug}-${Date.now()}-${index + 1}.jpeg`;
 
                 await sharp(file.buffer)
                     .resize(2000, 1333)
                     .toFormat('jpeg')
                     .jpeg({ quality: 90 })
-                    .toFile(`public/img/tours/${fileName}`);
+                    .toFile(`static/images/tour/${fileName}`);
 
                 req.body.images.push(fileName);
             })
         );
     }
-
-    console.log(req.body)
 
     next();
 });
