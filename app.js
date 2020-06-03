@@ -1,15 +1,33 @@
 const express = require('express');
 const path = require('path');
+// const expressGraphQL = require('express-graphql');
+// const schema = require('./schema/schema');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const { ApolloServer } = require('apollo-server-express');
 
 const AppError = require('./utils/appError');
+const { typeDefs, resolvers } = require('./Schemas/schema');
 const errorController = require('./middleware/error');
 const tourAPI = require('./apis/tour');
 const userAPI = require('./apis/user');
 const reviewAPI = require('./apis/review');
 
+const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+});
+
 const app = express();
+
+app.use(cors());
+
+server.applyMiddleware({ app });
+// Express graphQl
+// app.use('/graphql', expressGraphQL({
+//     schema,
+//     graphiql: true,
+// }))
 
 //// MIDDLEWARE \\\\
 // SECURITY
@@ -24,7 +42,6 @@ const app = express();
     // res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 //     next();
 // });
-app.use(cors())
 // MAIN
 app.use(cookieParser());
 app.use(express.json({ limit: '20kb' }));

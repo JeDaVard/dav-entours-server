@@ -41,6 +41,12 @@ const userSchema = new mongoose.Schema(
             enum: ['user', 'guide', 'admin'],
             default: 'user',
         },
+        conversations: [
+            {
+                type: mongoose.Schema.ObjectId,
+                ref: 'Conversations'
+            }
+        ],
         speaks: {
             type: [String],
             default: ['Not specified'],

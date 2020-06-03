@@ -3,6 +3,7 @@
     <words>
       <w>bcrypt</w>
       <w>dotenv</w>
+      <w>graphiql</w>
       <w>multer</w>
       <w>slugify</w>
     </words>
