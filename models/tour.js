@@ -9,7 +9,7 @@ const tourSchema = new mongoose.Schema(
             required: [true, 'A tour must have a name']
         },
         author: {
-            type: mongoose.Schema.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         },
         slug: {
@@ -19,7 +19,7 @@ const tourSchema = new mongoose.Schema(
         hashtags: [String],
         participants: [
             {
-                type: mongoose.Schema.ObjectId,
+                type: mongoose.Schema.Types.ObjectId,
                 ref: 'User',
                 // unique: [true, 'You can\'t participate twice at a same time, please, choose another date or invite the second participant']
             }
@@ -94,7 +94,7 @@ const tourSchema = new mongoose.Schema(
         ],
         guides: [
             {
-                type: mongoose.Schema.ObjectId,
+                type: mongoose.Schema.Types.ObjectId,
                 ref: 'User',
             },
         ]
@@ -119,15 +119,15 @@ tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({slug: 1});
 tourSchema.index({ startLocation: '2dsphere' });
 
-tourSchema.pre(/^find/, function (next) {
-    // "populate" means when we request it finds each guide by ObjectId located in the 'guides' array
-    this.populate({
-        path: 'guides',
-        // we exclude these props by writing a string starting with minus symbol
-        select: '-__v -passwordResetExpires -passwordResetToken',
-    });
-    next();
-});
+// tourSchema.pre(/^find/, function (next) {
+//     // "populate" means when we request it finds each guide by ObjectId located in the 'guides' array
+//     this.populate({
+//         path: 'guides',
+//         // we exclude these props by writing a string starting with minus symbol
+//         select: '-__v -passwordResetExpires -passwordResetToken',
+//     });
+//     next();
+// });
 
 // tourSchema.pre('save', async function(next) {
 //     const guidesPromises = this.guides.map(async id => await User.findById(id));

@@ -1,0 +1,180 @@
+const { gql } = require('apollo-server-express');
+const AppError = require('../../utils/appError')
+const { GraphQLScalarType } = require('graphql')
+const { Kind } = require('graphql/language')
+const User = require('../../models/user')
+const Tour = require('../../models/tour')
+const Review = require('../../models/review')
+const Conversation = require('../../models/Conversation')
+const Message = require('../../models/Message')
+const { authLogin, authSignUp } = require("../../controllers/auth");
+
+const typeDefs = gql`
+    scalar Date
+    enum Role {
+        USER
+        GUIDE
+        ADMIN
+    }
+    type Tour {
+        _id: ID!
+        createdAt: Date
+        updatedAt: Date
+        name: String!
+        author: User
+        guides: [User]
+        participants: [User]
+		reviews: [Review]
+        slug: String!
+        hashtags: [String]
+        summary: String
+        description: String
+		imageCover: String
+        images: [String]
+        duration: Int
+		maxGroupSize: Int
+		difficulty: String
+        price: Int
+		priceDiscount: Int
+		ratingsAverage: String
+		ratingsQuantity: Int
+		startDates: [String]
+		startLocation: Location
+        locations: [Location]
+	}
+	type Location {
+		_id: ID!
+        type: String
+		coordinates: [Float]
+		address: String
+		description: String
+        day: Int
+	}
+    type Review {
+        _id: ID!
+        review: String!
+        rating: Int!
+		createdAt: Date
+        tour: Tour
+		tourAuthor: User
+		author: User
+    }
+    type User {
+        _id: ID!
+        name: String!
+        email: String!
+        password: String
+        photo: String
+        createdAt: Date
+        speaks: [String]
+        role(role: Role): String
+        tours: [Tour]
+		reviews: [Review]
+        conversations: [Conversation]
+    }
+    type Conversation {
+        _id: ID!
+        messages: [Message]
+        author: User
+        participants: [User]
+    }
+    type Message {
+        _id: ID!
+        text: String!
+        createdAt: Date
+        sender: String!
+        conversation: Conversation
+    }
+    type Query {
+        users: [User]
+        user(id: ID!): User
+#        me: User
+        tours: [Tour]
+        tour(id: ID!): Tour
+        messages: [Message]
+        conversation: [Conversation]
+    }
+    type GetDataResponse {
+        success: Boolean,
+        message: String,
+        data: String
+    }
+    input LoginInput {
+        email: String!
+        password: String!
+    }
+    input SignUpInput {
+        email: String!
+        Password: String!
+        name: String!
+    }
+    type AuthData {
+        token: String!
+        expires: String!
+        user: User
+    }
+    type Mutation {
+        login(email: String!, password: String!): AuthData
+		signUp(email: String!, password: String!, name: String!): AuthData
+        addTour: Tour 
+    }
+`;
+
+const resolvers = {
+    Query: {
+        tours: async () => await Tour.find(),
+        tour: async (_, { id }) => await Tour.findOne({ slug: id }),
+        users: async (_, __, cx) => await User.find(),
+        user: async (_, { id }) => await User.findOne({_id: id }),
+        conversation: async parent => await Conversation.find({author: parent._id})
+    },
+    Conversation: {
+        messages: async parent => await Message.find({conversation: parent._id})
+    },
+    Review: {
+        tour: async parent => await Tour.findById(parent.tour),
+        author: async parent => await User.findById(parent.author)
+    },
+    User: {
+        tours: async parent => await Tour.find({author: parent._id }),
+        // reviews: async parent => await Review.find({tourAuthor: parent._id}),
+        reviews: async parent => {
+            const tourIds = await Tour.find({author: parent._id})
+            return await Review.find({tour: {$in: tourIds}})
+        },
+    },
+    Tour: {
+        author: async parent => await User.findOne({_id: parent.author }),
+        guides: async parent => await User.find({_id: { $in: parent.guides }}),
+        participants: async parent => await User.find({_id: { $in: parent.participants }}),
+        reviews: async parent => await Review.find({tour: { $in: parent._id }})
+    },
+    Mutation: {
+        addTour: () => {
+
+        },
+        login: async (_, args) => await authLogin(args),
+        signUp: async (_, args) => await authSignUp(args)
+    },
+    Date: new GraphQLScalarType({
+        name: 'Date',
+        description: 'Date custom scalar type',
+        parseValue(value) {
+            return new Date(value); // value from the client
+        },
+        serialize(value) {
+            return value.getTime(); // value sent to the client
+        },
+        parseLiteral(ast) {
+            if (ast.kind === Kind.INT) {
+                return parseInt(ast.value, 10); // ast value is always in string format
+            }
+            return null;
+        },
+    }),
+};
+
+module.exports = {
+    typeDefs,
+    resolvers
+}

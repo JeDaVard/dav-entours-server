@@ -27,26 +27,14 @@ const userSchema = new mongoose.Schema(
             default: 'default.jpg',
         },
         reviews: {
-            type: [mongoose.Schema.ObjectId],
+            type: [mongoose.Schema.Types.ObjectId],
             ref: 'Review'
         },
-        tours: [
-            {
-                type: mongoose.Schema.ObjectId,
-                ref: 'Tour'
-            }
-        ],
         role: {
             type: String,
             enum: ['user', 'guide', 'admin'],
             default: 'user',
         },
-        conversations: [
-            {
-                type: mongoose.Schema.ObjectId,
-                ref: 'Conversations'
-            }
-        ],
         speaks: {
             type: [String],
             default: ['Not specified'],
@@ -80,11 +68,16 @@ userSchema.pre('save', function (next) {
     next();
 });
 
-userSchema.methods.correctPassword = async function (password, dbPassword) {
+userSchema.pre('*', function(next) {
+    console.log('aaaa')
+    next()
+})
+
+userSchema.methods.correctPassword = async function(password, dbPassword) {
     return await bcrypt.compare(password, dbPassword);
 };
 
-userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
     if (this.passwordChangedAt) {
         const changedTimestamp = parseInt(
             this.passwordChangedAt.getTime() / 1000,
