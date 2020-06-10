@@ -31,6 +31,8 @@ const typeDefs = gql`
         description: String
 		imageCover: String
         images: [String]
+        thumbs: [String]
+        thumbCover: String
         duration: Int
 		maxGroupSize: Int
 		difficulty: String
@@ -74,15 +76,18 @@ const typeDefs = gql`
     }
     type Conversation {
         _id: ID!
+        createdAt: Date
         messages: [Message]
-        author: User
+        tour: Tour
+        guides: [User]
         participants: [User]
+        lastMessage: Message
     }
     type Message {
         _id: ID!
         text: String!
         createdAt: Date
-        sender: String!
+        sender: User
         conversation: Conversation
     }
     type Query {
@@ -92,7 +97,8 @@ const typeDefs = gql`
         tours: [Tour]
         tour(id: ID!): Tour
         messages: [Message]
-        conversation: [Conversation]
+        conversations: [Conversation]
+        conversation(id: ID!): Conversation
     }
     type GetDataResponse {
         success: Boolean,
@@ -124,12 +130,31 @@ const resolvers = {
     Query: {
         tours: async () => await Tour.find(),
         tour: async (_, { id }) => await Tour.findOne({ slug: id }),
-        users: async (_, __, cx) => await User.find(),
+        users: async () => await User.find(),
         user: async (_, { id }) => await User.findOne({_id: id }),
-        conversation: async parent => await Conversation.find({author: parent._id})
+        conversations: async (_, __, c) => {
+            const _id = await c.auth();
+            const tours = await Tour.find({$or: [{author: _id}, { guides: {$in: _id}}]})
+            return await Conversation.find({$or: [{participants: {$in: _id}}, {tour: {$in: tours.map(tour => tour._id)}}]})
+        },
+        conversation: async (_, { id }) => await Conversation.findOne({ _id: id })
     },
     Conversation: {
-        messages: async parent => await Message.find({conversation: parent._id})
+        messages: async parent => await Message.find({conversation: parent._id}),
+        tour: async parent => await Tour.findOne({_id: parent.tour}),
+        participants: async parent => await User.find({_id: { $in: parent.participants }}),
+        guides: async parent => {
+            const tour = await Tour.findOne({_id: parent.tour})
+            const guides = [tour.author, ...tour.guides]
+            return await User.find({ _id: { $in: guides }})
+        },
+        lastMessage: async parent => {
+            const messages = await Message.find({ conversation: parent._id })
+            return messages[messages.length-1]
+        }
+    },
+    Message: {
+      sender: async parent => await User.findOne({ _id: parent.sender })
     },
     Review: {
         tour: async parent => await Tour.findById(parent.tour),
@@ -173,6 +198,7 @@ const resolvers = {
         },
     }),
 };
+
 
 module.exports = {
     typeDefs,

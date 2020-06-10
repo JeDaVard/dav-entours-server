@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 const conversationSchema = new mongoose.Schema({
-    author: {
+    tour: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'Tour',
     },
     participants: [
         {
@@ -14,6 +14,7 @@ const conversationSchema = new mongoose.Schema({
 }, {
     timestamps: true
 })
+
 
 const Conversation = mongoose.model('conversation', conversationSchema)
 

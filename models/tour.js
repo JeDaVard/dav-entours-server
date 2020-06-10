@@ -136,16 +136,17 @@ tourSchema.index({ startLocation: '2dsphere' });
 //     next()
 // })
 
-tourSchema.virtual('durationWeeks').get(function ()  {
-    return this.duration / 7;
-});
+// tourSchema.virtual('durationWeeks').get(function ()  {
+//     return this.duration / 7;
+// });
 
 // virtual populate
-tourSchema.virtual('reviews', {
-    ref: 'Review',
-    foreignField: 'tour',
-    localField: '_id'
-});
+// tourSchema.virtual('reviews', {
+//     ref: 'Review',
+//     foreignField: 'tour',
+//     localField: '_id'
+// });
+
 
 tourSchema.pre('save', function (next) {
     this.slug = slugify(this._id.toString().slice(18) + '-' + this.name, { lower: true });
@@ -154,7 +155,6 @@ tourSchema.pre('save', function (next) {
 
 tourSchema.pre('save', function (next) {
     this.hashtags = this.hashtags.concat(this.name.split(' ').filter(hash => hash.length > 3))
-
     next();
 });
 

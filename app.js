@@ -6,10 +6,10 @@ const AppError = require('./utils/appError');
 const errorController = require('./middleware/error');
 // const cookieParser = require('cookie-parser');
 
-
 const app = express();
 
 app.use(cors());
+
 
 //// MIDDLEWARE \\\\
 // SECURITY
