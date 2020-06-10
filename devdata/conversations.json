@@ -1,0 +1,20 @@
+[
+  {
+    "_id": "5c88fa8cf4afda39709c2940",
+    "createdAt": "2020-05-19T09:00:00.000Z",
+    "tour": "5c88fa8cf4afda39709c296c",
+    "participants": ["5eb6d2c2e6f2d41b0412ee0d", "5c8a24282f8fb814b56fa18f", "5c8a21f22f8fb814b56fa18a"]
+  },
+  {
+    "_id": "5c88fa8cf4afda39709c2952",
+    "createdAt": "2020-05-22T09:00:00.000Z",
+    "tour": "5c88fa8cf4afda39709c2951",
+    "participants": ["5c88fa8cf4afda39709c296c", "5c8a24282f8fb814b56fa18f", "5c8a21f22f8fb814b56fa18a"]
+  },
+  {
+    "_id": "5c88fa8cf4afda39709c2941",
+    "createdAt": "2020-05-12T09:00:00.000Z",
+    "tour": "5c88fa8cf4afda39709c2970",
+    "participants": ["5eb6d2c2e6f2d41b0412ee0d", "5c8a24282f8fb814b56fa18f", "5c8a21f22f8fb814b56fa18a"]
+  }
+]
