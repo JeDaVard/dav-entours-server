@@ -1,7 +1,6 @@
 const { gql, PubSub, withFilter } = require('apollo-server-express');
 const { GraphQLScalarType } = require('graphql')
 const { Kind } = require('graphql/language');
-// const { PubSub, withFilter } = require('graphql-subscriptions');
 
 const pubsub = new PubSub();
 
@@ -132,7 +131,7 @@ const typeDefs = gql`
         addTour: Tour 
     }
     type Subscription {
-        messageAdded(convId: ID!): Message!
+        messageAdded(convId: ID!): Message
     }
     schema {
         query: Query
@@ -195,10 +194,10 @@ const resolvers = {
         sendMessage: async (_, { text, convId }, c) => {
             const message = await Message.create({sender: c.user._id, text, conversation: convId});
             await pubsub.publish('MESSAGE_ADDED', { messageAdded: message })
+            console.log('from mutation')
             return message
         },
         addTour: () => {
-
         },
         login: async (_, args) => await authLogin(args),
         signUp: async (_, args) => await authSignUp(args)
@@ -208,6 +207,7 @@ const resolvers = {
             subscribe: withFilter(
                 () => pubsub.asyncIterator('MESSAGE_ADDED'),
                 (payload, variables) => {
+                    console.log(payload.messageAdded._id)
                  return payload.messageAdded.conversation.toString() === variables.convId;
                     }
                 )
