@@ -20,6 +20,8 @@
     "express": "^4.17.1",
     "express-graphql": "^0.9.0",
     "graphql": "^15.0.0",
+    "graphql-redis-subscriptions": "^2.2.1",
+    "graphql-subscriptions": "^1.1.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "mongoose": "^5.9.11",
@@ -27,6 +29,7 @@
     "nodemon": "^2.0.3",
     "sharp": "^0.25.2",
     "slugify": "^1.4.0",
+    "subscriptions-transport-ws": "^0.9.16",
     "validator": "^13.0.0"
   },
   "devDependencies": {

@@ -2,9 +2,11 @@
   <dictionary name="davitvardanyan">
     <words>
       <w>bcrypt</w>
+      <w>conv</w>
       <w>dotenv</w>
       <w>graphiql</w>
       <w>multer</w>
+      <w>pubsub</w>
       <w>slugify</w>
     </words>
   </dictionary>

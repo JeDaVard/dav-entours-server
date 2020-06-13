@@ -1,8 +1,6 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-const server = require('./graphql/server')
-const AppError = require('./utils/appError');
 const errorController = require('./middleware/error');
 // const cookieParser = require('cookie-parser');
 
@@ -29,13 +27,6 @@ app.use(cors());
 app.use(express.json({ limit: '20kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(express.static(path.join(__dirname, 'static')));
-
-server.applyMiddleware({ app });
-
-// Error middleware
-app.all('*', (req, res, next) => {
-    next(new AppError('Not found!'));
-});
 
 app.use(errorController);
 

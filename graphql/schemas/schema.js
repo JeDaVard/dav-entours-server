@@ -1,13 +1,18 @@
-const { gql } = require('apollo-server-express');
-const AppError = require('../../utils/appError')
+const { gql, PubSub, withFilter } = require('apollo-server-express');
 const { GraphQLScalarType } = require('graphql')
-const { Kind } = require('graphql/language')
+const { Kind } = require('graphql/language');
+// const { PubSub, withFilter } = require('graphql-subscriptions');
+
+const pubsub = new PubSub();
+
+const AppError = require('../../utils/appError')
 const User = require('../../models/user')
 const Tour = require('../../models/tour')
 const Review = require('../../models/review')
 const Conversation = require('../../models/Conversation')
 const Message = require('../../models/Message')
 const { authLogin, authSignUp } = require("../../controllers/auth");
+
 
 const typeDefs = gql`
     scalar Date
@@ -87,18 +92,8 @@ const typeDefs = gql`
         _id: ID!
         text: String!
         createdAt: Date
-        sender: User
-        conversation: Conversation
-    }
-    type Query {
-        users: [User]
-        user(id: ID!): User
-#        me: User
-        tours: [Tour]
-        tour(id: ID!): Tour
-        messages: [Message]
-        conversations: [Conversation]
-        conversation(id: ID!): Conversation
+        sender: User!
+        conversation: Conversation!
     }
     type GetDataResponse {
         success: Boolean,
@@ -119,10 +114,30 @@ const typeDefs = gql`
         expires: String!
         user: User
     }
+	type Query {
+		users: [User]
+		user(id: ID!): User
+		#        me: User
+		tours: [Tour]
+		tour(id: ID!): Tour
+		messages(id: ID!): [Message]
+		conversations: [Conversation]
+		conversation(id: ID!): Conversation
+	}
     type Mutation {
+        sendMessage(convId: ID!, text: String!): Message
+        removeMessage(id: ID!): Message
         login(email: String!, password: String!): AuthData
 		signUp(email: String!, password: String!, name: String!): AuthData
         addTour: Tour 
+    }
+    type Subscription {
+        messageAdded(convId: ID!): Message!
+    }
+    schema {
+        query: Query
+        mutation: Mutation
+        subscription: Subscription
     }
 `;
 
@@ -133,11 +148,12 @@ const resolvers = {
         users: async () => await User.find(),
         user: async (_, { id }) => await User.findOne({_id: id }),
         conversations: async (_, __, c) => {
-            const _id = await c.auth();
+            const { _id } = c.user;
             const tours = await Tour.find({$or: [{author: _id}, { guides: {$in: _id}}]})
             return await Conversation.find({$or: [{participants: {$in: _id}}, {tour: {$in: tours.map(tour => tour._id)}}]})
         },
-        conversation: async (_, { id }) => await Conversation.findOne({ _id: id })
+        conversation: async (_, { id }) => await Conversation.findOne({ _id: id }),
+        messages: async (_, { id }) => await Message.find({conversation: id})
     },
     Conversation: {
         messages: async parent => await Message.find({conversation: parent._id}),
@@ -175,11 +191,27 @@ const resolvers = {
         reviews: async parent => await Review.find({tour: { $in: parent._id }})
     },
     Mutation: {
+        removeMessage: async (_, { id }, c) =>  await Message.findOneAndUpdate({_id: id, sender: c.user._id}, {text: '[Removed]'}, {new : true}),
+        sendMessage: async (_, { text, convId }, c) => {
+            const message = await Message.create({sender: c.user._id, text, conversation: convId});
+            await pubsub.publish('MESSAGE_ADDED', { messageAdded: message })
+            return message
+        },
         addTour: () => {
 
         },
         login: async (_, args) => await authLogin(args),
         signUp: async (_, args) => await authSignUp(args)
+    },
+    Subscription: {
+        messageAdded: {
+            subscribe: withFilter(
+                () => pubsub.asyncIterator('MESSAGE_ADDED'),
+                (payload, variables) => {
+                 return payload.messageAdded.conversation.toString() === variables.convId;
+                    }
+                )
+        }
     },
     Date: new GraphQLScalarType({
         name: 'Date',
