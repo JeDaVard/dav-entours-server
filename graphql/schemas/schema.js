@@ -147,7 +147,8 @@ const resolvers = {
         users: async () => await User.find(),
         user: async (_, { id }) => await User.findOne({_id: id }),
         conversations: async (_, __, c) => {
-            const { _id } = c.user;
+            const user = await c.user;
+            const { _id } = user
             const tours = await Tour.find({$or: [{author: _id}, { guides: {$in: _id}}]})
             return await Conversation.find({$or: [{participants: {$in: _id}}, {tour: {$in: tours.map(tour => tour._id)}}]})
         },
@@ -194,12 +195,11 @@ const resolvers = {
         sendMessage: async (_, { text, convId }, c) => {
             const message = await Message.create({sender: c.user._id, text, conversation: convId});
             await pubsub.publish('MESSAGE_ADDED', { messageAdded: message })
-            console.log('from mutation')
             return message
         },
         addTour: () => {
         },
-        login: async (_, args) => await authLogin(args),
+        login: async (_, args, c) => await authLogin(args),
         signUp: async (_, args) => await authSignUp(args)
     },
     Subscription: {
@@ -207,7 +207,6 @@ const resolvers = {
             subscribe: withFilter(
                 () => pubsub.asyncIterator('MESSAGE_ADDED'),
                 (payload, variables) => {
-                    console.log(payload.messageAdded._id)
                  return payload.messageAdded.conversation.toString() === variables.convId;
                     }
                 )
