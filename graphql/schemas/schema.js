@@ -156,7 +156,7 @@ const resolvers = {
         conversation: async (_, { id }) => await Conversation.findOne({ _id: id }),
         messages: async (_, { id, page, limit }) => {
             const p = page || 1;
-            const l = limit || 2;
+            const l = limit || 6;
             let s = (p - 1) * l
 
             const messagesQuery = Message.find({conversation: id}).sort('-createdAt')
