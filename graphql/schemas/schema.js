@@ -21,7 +21,7 @@ const typeDefs = gql`
         ADMIN
     }
     type Tour {
-        _id: ID!
+        _id: String!
         createdAt: Date
         updatedAt: Date
         name: String!
@@ -29,7 +29,7 @@ const typeDefs = gql`
         guides: [User]
         participants: [User]
 		reviews: [Review]
-        slug: String!
+        slug: ID!
         hashtags: [String]
         summary: String
         description: String
@@ -108,6 +108,7 @@ const typeDefs = gql`
         Password: String!
         name: String!
     }
+    
     type AuthData {
         token: String!
         expires: String!
@@ -119,7 +120,7 @@ const typeDefs = gql`
 		#        me: User
 		tours: [Tour]
 		tour(id: ID!): Tour
-		messages(id: ID!): [Message]
+		messages(id: ID! page: Int): [Message]
 		conversations: [Conversation]
 		conversation(id: ID!): Conversation
 	}
@@ -153,7 +154,15 @@ const resolvers = {
             return await Conversation.find({$or: [{participants: {$in: _id}}, {tour: {$in: tours.map(tour => tour._id)}}]})
         },
         conversation: async (_, { id }) => await Conversation.findOne({ _id: id }),
-        messages: async (_, { id }) => await Message.find({conversation: id})
+        messages: async (_, { id, page, limit }) => {
+            const p = page || 1;
+            const l = limit || 2;
+            let s = (p - 1) * l
+
+            const messagesQuery = Message.find({conversation: id}).sort('-createdAt')
+            const messages = await messagesQuery.skip(s).limit(l)
+            return messages
+        }
     },
     Conversation: {
         messages: async parent => await Message.find({conversation: parent._id}),
