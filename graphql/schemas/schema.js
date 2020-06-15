@@ -117,6 +117,7 @@ const typeDefs = gql`
 	type Query {
 		users: [User]
 		user(id: ID!): User
+        search: [Tour]
 		#        me: User
 		tours: [Tour]
 		tour(id: ID!): Tour
@@ -156,7 +157,7 @@ const resolvers = {
         conversation: async (_, { id }) => await Conversation.findOne({ _id: id }),
         messages: async (_, { id, page, limit }) => {
             const p = page || 1;
-            const l = limit || 6;
+            const l = limit || 12;
             let s = (p - 1) * l
 
             const messagesQuery = Message.find({conversation: id}).sort('-createdAt')
