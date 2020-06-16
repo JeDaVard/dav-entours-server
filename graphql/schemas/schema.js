@@ -167,13 +167,13 @@ const typeDefs = gql`
     type Mutation {
         me: MeMutationResponse
         sendMessage(convId: ID!, text: String!): MessageMutationResponse
-        removeMessage(id: ID!): Message
+        removeMessage(id: ID!): MessageMutationResponse
         login(email: String!, password: String!): AuthData
 		signUp(email: String!, password: String!, name: String!): AuthData
         addTour: Tour 
     }
     type Subscription {
-        messageAdded(convId: ID!): MessageMutationResponse
+        messageAdded(convId: ID!): Message
     }
     schema {
         query: Query
@@ -250,17 +250,17 @@ const resolvers = {
         reviews: async parent => await Review.find({tour: { $in: parent._id }})
     },
     Mutation: {
-        removeMessage: async (_, { id }, c) =>  await Message.findOneAndUpdate({_id: id, sender: c.user._id}, {text: '[Removed]'}, {new : true}),
+        removeMessage: catchAsyncResolver(
+            async (_, { id }, c) => await Message.findOneAndUpdate({_id: id, sender: c.user._id}, {text: '[Removed]'}, {new : true}),
+            '200',
+            'Successfully removed',
+            'Error, failed to remove message',
+            '400',
+        ),
         sendMessage: catchAsyncResolver(
             async (_, { text, convId }, c) => {
                 const message = await Message.create({sender: c.user._id, text, conversation: convId});
-                await pubsub.publish('MESSAGE_ADDED', { messageAdded: {
-                    code: '200',
-                    message: 'Successfully synced',
-                    success: true,
-                    data: message
-                    }
-                })
+                await pubsub.publish('MESSAGE_ADDED', { messageAdded: message })
                 return message
             },
             '200',
@@ -277,7 +277,7 @@ const resolvers = {
             subscribe: withFilter(
                 () => pubsub.asyncIterator('MESSAGE_ADDED'),
                 (payload, variables) => {
-                 return payload.messageAdded.data.conversation.toString() === variables.convId;
+                 return payload.messageAdded.conversation.toString() === variables.convId;
                     }
                 )
         }
