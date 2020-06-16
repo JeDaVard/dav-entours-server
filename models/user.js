@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema(
             type: [mongoose.Schema.Types.ObjectId],
             ref: 'Review'
         },
+        saved: {
+            type: [mongoose.Schema.Types.ObjectId],
+            ref: 'Tour'
+        },
         role: {
             type: String,
             enum: ['user', 'guide', 'admin'],

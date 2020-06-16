@@ -1,4 +1,4 @@
-const { gql, PubSub, withFilter } = require('apollo-server-express');
+const { gql, PubSub, withFilter, AuthenticationError, ForbiddenError, UserInputError, ApolloError } = require('apollo-server-express');
 const { GraphQLScalarType } = require('graphql')
 const { Kind } = require('graphql/language');
 
@@ -10,6 +10,7 @@ const Tour = require('../../models/tour')
 const Review = require('../../models/review')
 const Conversation = require('../../models/Conversation')
 const Message = require('../../models/Message')
+const {catchAsyncResolver} = require("../../utils/catchAsyncResolver");
 const { authLogin, authSignUp } = require("../../controllers/auth");
 
 
@@ -19,6 +20,29 @@ const typeDefs = gql`
         USER
         GUIDE
         ADMIN
+    }
+    interface MutationResponse {
+        code: String!
+        success: Boolean!
+        message: String!
+    }
+	type TourMutationResponse implements MutationResponse{
+		code: String!
+		success: Boolean!
+		message: String!
+        data: Tour
+	}
+    type MeMutationResponse implements MutationResponse {
+		code: String!
+		success: Boolean!
+		message: String!
+        data: Me
+    }
+    type MessageMutationResponse implements MutationResponse {
+		code: String!
+		success: Boolean!
+		message: String!
+		data: Message
     }
     type Tour {
         _id: String!
@@ -69,19 +93,40 @@ const typeDefs = gql`
         _id: ID!
         name: String!
         email: String!
-        password: String
         photo: String
         createdAt: Date
         speaks: [String]
         role(role: Role): String
         tours: [Tour]
 		reviews: [Review]
+        #remove the following
         conversations: [Conversation]
+    }
+	type Me {
+		_id: ID!
+		name: String!
+		email: String!
+		password: String
+		photo: String
+		createdAt: Date
+		speaks: [String]
+		role(role: Role): String
+		tours: [Tour]
+		reviews: [Review]
+		conversations: [Conversation]
+		conversation(id: ID!, page: Int, limit: Int): Conversation
+        saved: [Tour]
+	}
+    type MessagesResponse {
+        hasMore: Boolean,
+        nextPage: Int,
+        total: Int
+        messages: [Message]
     }
     type Conversation {
         _id: ID!
         createdAt: Date
-        messages: [Message]
+        messages(page: Int limit: Int): MessagesResponse
         tour: Tour
         guides: [User]
         participants: [User]
@@ -93,11 +138,6 @@ const typeDefs = gql`
         createdAt: Date
         sender: User!
         conversation: Conversation!
-    }
-    type GetDataResponse {
-        success: Boolean,
-        message: String,
-        data: String
     }
     input LoginInput {
         email: String!
@@ -114,26 +154,26 @@ const typeDefs = gql`
         expires: String!
         user: User
     }
+    
 	type Query {
 		users: [User]
 		user(id: ID!): User
         search: [Tour]
-		#        me: User
+        me: Me
 		tours: [Tour]
 		tour(id: ID!): Tour
-		messages(id: ID! page: Int): [Message]
-		conversations: [Conversation]
-		conversation(id: ID!): Conversation
 	}
+    
     type Mutation {
-        sendMessage(convId: ID!, text: String!): Message
+        me: MeMutationResponse
+        sendMessage(convId: ID!, text: String!): MessageMutationResponse
         removeMessage(id: ID!): Message
         login(email: String!, password: String!): AuthData
 		signUp(email: String!, password: String!, name: String!): AuthData
         addTour: Tour 
     }
     type Subscription {
-        messageAdded(convId: ID!): Message
+        messageAdded(convId: ID!): MessageMutationResponse
     }
     schema {
         query: Query
@@ -148,25 +188,37 @@ const resolvers = {
         tour: async (_, { id }) => await Tour.findOne({ slug: id }),
         users: async () => await User.find(),
         user: async (_, { id }) => await User.findOne({_id: id }),
-        conversations: async (_, __, c) => {
-            const user = await c.user;
-            const { _id } = user
-            const tours = await Tour.find({$or: [{author: _id}, { guides: {$in: _id}}]})
-            return await Conversation.find({$or: [{participants: {$in: _id}}, {tour: {$in: tours.map(tour => tour._id)}}]})
+        me: async (_, __, c ) => await User.findOne({_id: c.user._id})
+    },
+    Me: {
+        tours: async parent => await Tour.find({author: parent._id }),
+        reviews: async parent => {
+            const tourIds = await Tour.find({author: parent._id})
+            return await Review.find({tour: {$in: tourIds}})
+        },
+        saved: async (_, __, c ) => await Tour.find({_id: { $in: c.user.saved } }),
+        conversations: async (_, __, c ) => {
+            const tours = await Tour.find({$or: [{author: c.user._id}, { guides: {$in: c.user._id}}]})
+            return await Conversation.find({$or: [{participants: {$in: c.user._id}}, {tour: {$in: tours.map(tour => tour._id)}}]})
         },
         conversation: async (_, { id }) => await Conversation.findOne({ _id: id }),
-        messages: async (_, { id, page, limit }) => {
-            const p = page || 1;
-            const l = limit || 12;
-            let s = (p - 1) * l
-
-            const messagesQuery = Message.find({conversation: id}).sort('-createdAt')
-            const messages = await messagesQuery.skip(s).limit(l)
-            return messages
-        }
     },
     Conversation: {
-        messages: async parent => await Message.find({conversation: parent._id}),
+        messages: async (parent, { page, limit }) => {
+            // console.log(parent)
+            const messagesQuery = Message.find({conversation: parent._id}).sort('-createdAt')
+            const options = {
+                page: page || 1,
+                limit: limit || 0
+            };
+            const messages = await Message.paginate(messagesQuery, options);
+            return {
+                hasMore: messages.hasNextPage,
+                nextPage: messages.nextPage,
+                total: messages.totalDocs,
+                messages: messages.docs
+            }
+        },
         tour: async parent => await Tour.findOne({_id: parent.tour}),
         participants: async parent => await User.find({_id: { $in: parent.participants }}),
         guides: async parent => {
@@ -174,10 +226,7 @@ const resolvers = {
             const guides = [tour.author, ...tour.guides]
             return await User.find({ _id: { $in: guides }})
         },
-        lastMessage: async parent => {
-            const messages = await Message.find({ conversation: parent._id })
-            return messages[messages.length-1]
-        }
+        lastMessage: async parent => await Message.findOne({ conversation: parent._id }).sort('-createdAt').limit(1)
     },
     Message: {
       sender: async parent => await User.findOne({ _id: parent.sender })
@@ -202,11 +251,22 @@ const resolvers = {
     },
     Mutation: {
         removeMessage: async (_, { id }, c) =>  await Message.findOneAndUpdate({_id: id, sender: c.user._id}, {text: '[Removed]'}, {new : true}),
-        sendMessage: async (_, { text, convId }, c) => {
-            const message = await Message.create({sender: c.user._id, text, conversation: convId});
-            await pubsub.publish('MESSAGE_ADDED', { messageAdded: message })
-            return message
-        },
+        sendMessage: catchAsyncResolver(
+            async (_, { text, convId }, c) => {
+                const message = await Message.create({sender: c.user._id, text, conversation: convId});
+                await pubsub.publish('MESSAGE_ADDED', { messageAdded: {
+                    code: '200',
+                    message: 'Successfully synced',
+                    success: true,
+                    data: message
+                    }
+                })
+                return message
+            },
+            '200',
+            'Successfully sent',
+            'Error, failed to send message',
+            '400'),
         addTour: () => {
         },
         login: async (_, args, c) => await authLogin(args),
@@ -217,7 +277,7 @@ const resolvers = {
             subscribe: withFilter(
                 () => pubsub.asyncIterator('MESSAGE_ADDED'),
                 (payload, variables) => {
-                 return payload.messageAdded.conversation.toString() === variables.convId;
+                 return payload.messageAdded.data.conversation.toString() === variables.convId;
                     }
                 )
         }

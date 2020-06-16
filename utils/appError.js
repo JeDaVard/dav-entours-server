@@ -1,12 +1,13 @@
-class AppError extends Error {
+const { ApolloError } = require('apollo-server-express')
+
+class AppError extends ApolloError {
     constructor(message, statusCode) {
         super(message);
 
-        this.statusCode = statusCode;
-        this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
+        this.code = statusCode;
         this.isOperational = true;
 
-        Error.captureStackTrace(this, this.constructor);
+        // ApolloError.captureStackTrace(this, this.constructor);
     }
 }
 
