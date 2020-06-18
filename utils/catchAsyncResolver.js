@@ -1,6 +1,6 @@
 const { ApolloError } = require('apollo-server-express')
 
-const catchAsyncResolver = (resolver, code, message, errorCode, errorMessage) => {
+const catchAsyncResolver = (resolver, code = '200', message = 'Done Successfully!', errorCode, errorMessage) => {
     return async (parent, args, context, info) => {
         try {
             const data = await resolver(parent, args, context, info);

@@ -35,6 +35,10 @@ mongoose.Query.prototype.exec = async function() {
     return result
 }
 
+exports.clearHash = function(hashKey) {
+    redis.del(JSON.stringify(hashKey))
+}
+
 module.exports = mongoose
     .connect(process.env.MONGO_DB, {
         useNewUrlParser: true,
