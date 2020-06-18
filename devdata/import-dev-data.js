@@ -5,8 +5,8 @@ const mongoose = require('mongoose');
 const Tour = require('./../models/tour');
 const Review = require('./../models/review');
 const User = require('./../models/user');
-const Conversation = require('./../models/conversation');
-const Message = require('./../models/message');
+const Conversation = require('../models/conversation');
+const Message = require('../models/message');
 
 
 const DB = 'mongodb+srv://davit:vardanyan@cluster0-ycdz4.mongodb.net/test?retryWrites=true&w=majority';
