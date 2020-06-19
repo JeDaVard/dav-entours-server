@@ -124,6 +124,7 @@ module.exports = gql`
 		text: String!
 		createdAt: Date
 		sender: User!
+		isImage: Boolean
 		conversation: Conversation!
 	}
 	input LoginInput {

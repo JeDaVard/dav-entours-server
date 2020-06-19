@@ -11,6 +11,9 @@ const messageSchema = new mongoose.Schema({
         type: String,
         required: [true, 'You did\'n wrote the text, please write something before send']
     },
+    isImage: {
+      type: Boolean
+    },
     sender: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
