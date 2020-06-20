@@ -59,7 +59,7 @@ module.exports = gql`
 		locations: [Location]
 	}
 	type Location {
-		_id: ID!
+		_id: ID
 		type: String
 		coordinates: [Float]
 		address: String
