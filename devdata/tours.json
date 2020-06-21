@@ -55,7 +55,8 @@
         "coordinates": [-81.768719, 24.552242],
         "day": 5
       }
-    ]
+    ],
+    "draft": false
   },
   {
     "startLocation": {
@@ -110,7 +111,8 @@
         "coordinates": [-117.490309, 51.261937],
         "day": 5
       }
-    ]
+    ],
+    "draft": false
   },
   {
     "startLocation": {
@@ -158,7 +160,8 @@
         "coordinates": [-106.516623, 39.60499],
         "day": 2
       }
-    ]
+    ],
+    "draft": false
   },
   {
     "startLocation": {
@@ -220,7 +223,8 @@
         "coordinates": [-116.107963, 34.011646],
         "day": 9
       }
-    ]
+    ],
+    "draft": false
   },
   {
     "startLocation": {
@@ -271,7 +275,8 @@
         "coordinates": [-122.408865, 37.787825],
         "day": 5
       }
-    ]
+    ],
+    "draft": false
   },
   {
     "startLocation": {
@@ -340,7 +345,8 @@
         "coordinates": [-119.600492, 37.742371],
         "day": 10
       }
-    ]
+    ],
+    "draft": false
   },
   {
     "startLocation": {
@@ -391,7 +397,8 @@
         "coordinates": [-117.07399, 36.501435],
         "day": 6
       }
-    ]
+    ],
+    "draft": false
   },
   {
     "startLocation": {
@@ -432,7 +439,8 @@
         "coordinates": [-114.406097, 62.439943],
         "day": 1
       }
-    ]
+    ],
+    "draft": false
   },
   {
     "startLocation": {
@@ -483,6 +491,7 @@
         "coordinates": [-122.434697, 38.482181],
         "day": 5
       }
-    ]
+    ],
+    "draft": false
   }
 ]

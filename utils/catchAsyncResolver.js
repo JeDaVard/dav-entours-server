@@ -12,7 +12,10 @@ const catchAsyncResolver = (resolver, code = '200', message = 'Done Successfully
                 data
             }
         } catch (e) {
-            throw new ApolloError(errorMessage || e.message, errorCode || 500)
+            throw new ApolloError(
+                !(process.env.NODE_ENV === 'development') ? errorMessage : e.message
+                , errorCode || 500
+            )
         }
     }
 }

@@ -7,6 +7,11 @@ module.exports = gql`
 		GUIDE
 		ADMIN
 	}
+	enum Difficulty {
+		EASY
+		MEDIUM
+		HARD
+	}
 	interface MutationResponse {
 		code: String!
 		success: Boolean!
@@ -49,7 +54,7 @@ module.exports = gql`
 		thumbCover: String
 		duration: Int
 		maxGroupSize: Int
-		difficulty: String
+		difficulty(difficulty: Difficulty): String
 		price: Int
 		priceDiscount: Int
 		ratingsAverage: String
@@ -57,6 +62,7 @@ module.exports = gql`
 		startDates: [String]
 		startLocation: Location
 		locations: [Location]
+        draft: Boolean
 	}
 	type Location {
 		_id: ID
@@ -85,6 +91,7 @@ module.exports = gql`
 		role(role: Role): String
 		tours: [Tour]
 		reviews: [Review]
+		draft: [Tour]
 		#remove the following
 		conversations: [Conversation]
 	}
@@ -103,6 +110,8 @@ module.exports = gql`
 		conversations: [Conversation]
 		conversation(id: ID!, page: Int, limit: Int): Conversation
 		saved: [Tour]
+        myTour(slug: String!): Tour
+		draft: [Tour]
 	}
 	type MessagesResponse {
 		hasMore: Boolean,
@@ -158,6 +167,7 @@ module.exports = gql`
 		removeMessage(id: ID!): MessageMutationResponse
 		login(email: String!, password: String!): AuthData
 		signUp(email: String!, password: String!, name: String!): AuthData
+		makeATour(name: String difficulty: String maxGroupSize: Int): TourMutationResponse
 		addTour: Tour
 	}
 	type Subscription {

@@ -2,6 +2,18 @@ const mongoose = require('mongoose');
 const slugify = require('slugify');
 // const User = require('./user');
 
+const locationSchema = new mongoose.Schema({
+    type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+    },
+    coordinates: [Number],
+    address: String,
+    description: String,
+    day: Number,
+})
+
 const tourSchema = new mongoose.Schema(
     {
         name: {
@@ -27,7 +39,7 @@ const tourSchema = new mongoose.Schema(
         summary: {
             type: String,
             trim: true,
-            required: [true, 'A tour must have a description'],
+            // required: [true, 'A tour must have a description'],
         },
         description: {
             type: String,
@@ -35,25 +47,26 @@ const tourSchema = new mongoose.Schema(
         },
         imageCover: {
             type: String,
-            required: [true, 'A tour must have a cover image'],
+            // required: [true, 'A tour must have a cover image'],
         },
         images: [String],
         duration: {
             type: Number,
-            required: [true, 'Please, provide the duration'],
+            // required: [true, 'Please, provide the duration'],
         },
-
         maxGroupSize: {
             type: Number,
             required: [true, 'A tour must have a group size'],
         },
         difficulty: {
             type: String,
+            enum: ['easy', 'medium', 'hard'],
+            default: 'easy',
             required: [true, 'Please, provide a difficulty level'],
         },
         price: {
             type: Number,
-            required: [true, 'Please, provide the price'],
+            // required: [true, 'Please, provide the price'],
         },
         priceDiscount: Number,
         ratingsAverage: {
@@ -78,6 +91,7 @@ const tourSchema = new mongoose.Schema(
             coordinates: [Number],
             address: String,
             description: String,
+            day: Number
         },
         locations: [
             {
@@ -97,7 +111,11 @@ const tourSchema = new mongoose.Schema(
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'User',
             },
-        ]
+        ],
+        draft: {
+            type: Boolean,
+            default: true
+        }
     },
     {
         toJSON: { virtuals: true },
@@ -147,6 +165,17 @@ tourSchema.index({ startLocation: '2dsphere' });
 //     localField: '_id'
 // });
 
+tourSchema.pre('save', function (next) {
+    if (this.locations.length) {
+        this.startLocation = this.locations[0]
+        return next();
+    }
+
+    if (this.draft && !this.startLocation.coordinates && !this.locations.length) {
+        this.startLocation = undefined
+    }
+    next();
+})
 
 tourSchema.pre('save', function (next) {
     this.slug = slugify(this._id.toString().slice(18) + '-' + this.name, { lower: true });
@@ -155,6 +184,18 @@ tourSchema.pre('save', function (next) {
 
 tourSchema.pre('save', function (next) {
     this.hashtags = this.hashtags.concat(this.name.split(' ').filter(hash => hash.length > 3))
+    next();
+});
+
+tourSchema.pre('save', function (next) {
+    this.duration = this.locations.reduce((ac, loc) => {
+        return ac + loc.day
+    }, 0)
+    next();
+});
+
+tourSchema.pre('find', function (next) {
+    this.find({ draft: { $ne: true } });
     next();
 });
 
