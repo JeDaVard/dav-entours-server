@@ -167,7 +167,8 @@ module.exports = gql`
 		removeMessage(id: ID!): MessageMutationResponse
 		login(email: String!, password: String!): AuthData
 		signUp(email: String!, password: String!, name: String!): AuthData
-		makeATour(name: String difficulty: String maxGroupSize: Int): TourMutationResponse
+		makeATour(name: String! difficulty: String! maxGroupSize: Int!): TourMutationResponse
+		tourHeading(id: ID! name: String! difficulty: String! maxGroupSize: Int!, hashtags: String): TourMutationResponse
 		addTour: Tour
 	}
 	type Subscription {

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const _ = require('lodash');
 // const User = require('./user');
 
 const locationSchema = new mongoose.Schema({
@@ -183,7 +184,8 @@ tourSchema.pre('save', function (next) {
 });
 
 tourSchema.pre('save', function (next) {
-    this.hashtags = this.hashtags.concat(this.name.split(' ').filter(hash => hash.length > 3))
+    const hashtags = [...this.hashtags, ...this.name.split(' ').filter(hash => hash.length > 3)];
+    this.hashtags = _.uniq(hashtags)
     next();
 });
 

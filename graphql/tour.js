@@ -24,11 +24,27 @@ module.exports = {
                     difficulty,
                     maxGroupSize,
                 }
-                const tour = await Tour.create(options)
-                return tour
+                return Tour.create(options);
             },
             '200',
             'Successfully created',
+            '400',
+            'Error while creating a tour'
+        ),
+        tourHeading: catchAsyncResolver(
+            async (_, { id, name, difficulty, maxGroupSize, hashtags }, c) => {
+                const options = {
+                    name,
+                    difficulty,
+                    maxGroupSize,
+                    hashtags: hashtags.length ? hashtags.split(',') : []
+                }
+                const tour = await Tour.findOneAndUpdate({ _id: id, author: c.user._id }, options)
+                console.log(tour)
+                return tour
+            },
+            '200',
+            'Successfully saved',
             '400',
             'Error while creating a tour'
         ),
