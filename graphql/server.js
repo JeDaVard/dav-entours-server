@@ -63,7 +63,6 @@ const server = new ApolloServer({
                     user
                 }
             } catch (e) {
-                console.log(e)
                 return new AppError('Some error while authenticate in WS')
             }
         },

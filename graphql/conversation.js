@@ -47,7 +47,7 @@ module.exports = {
                 const isImage = text.endsWith('.jpg')
                     || text.endsWith('.jpeg')
                     || text.endsWith('.png') && !text.match(/\s+/g);
-                console.log(isImage)
+
                 const message = await Message.create({sender: c.user._id, text, conversation: convId, isImage});
                 await pubsub.publish(`CONVERSATION_${convId}`, { messageAdded: message })
                 return message
