@@ -8,7 +8,6 @@ const app = express();
 
 app.use(cors());
 
-
 //// MIDDLEWARE \\\\
 // SECURITY
 //Implementing cors

@@ -73,5 +73,19 @@ module.exports = {
             '400',
             'Error while creating a tour'
         ),
+        tourGallery: catchAsyncResolver(
+            async (_, { id, file }, c) => {
+                const res = await file;
+                console.log(res)
+
+                const tour = await Tour.find({ _id: id })
+                return tour[0]
+            },
+            '200',
+            'Successfully saved',
+            '400',
+            'Error while creating a tour'
+        ),
     }
 };
+

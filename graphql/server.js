@@ -1,15 +1,21 @@
 const { ApolloServer } = require('apollo-server-express');
-const typeDefs = require('./schema');
+const sch = require('./schema');
 const { root, me, tour, conversation } = require('./')
 const AppError = require('../utils/appError');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { makeExecutableSchema } = require('@graphql-tools/schema')
+const { makeExecutableSchema } = require('graphql-tools');
+const { mergeSchemas, mergeSchemasAsync } = require('graphql-tools');
 
-const schema = makeExecutableSchema({
-    typeDefs,
+
+const executableSchema = makeExecutableSchema({
+    typeDefs: sch,
     resolvers: [root, me, tour, conversation],
 });
+
+const schema = mergeSchemas({
+    schemas: [executableSchema]
+})
 // const { promisify } = require('util');
 
 const contextMid = (req, error, user, connection) => ({

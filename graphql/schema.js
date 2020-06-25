@@ -195,8 +195,10 @@ module.exports = gql`
             description: String
         ): TourMutationResponse
 		tourLocations(id: ID locations: [LocationInput]): TourMutationResponse
+		tourGallery(id: ID file: Upload!): TourMutationResponse
         addTour: Tour
     }
+    scalar Upload
     type Subscription {
         messageAdded(convId: ID!): Message
     }
