@@ -2,8 +2,8 @@ const { PubSub, withFilter } = require('apollo-server-express');
 
 const pubsub = new PubSub();
 
-const { User, Tour, Message} = require('../models/')
-const { catchAsyncResolver } = require('../utils/catchAsyncResolver');
+const { User, Tour, Message} = require('../../models')
+const { catchAsyncResolver } = require('../../utils/catchAsyncResolver');
 
 module.exports = {
     Conversation: {

@@ -1,21 +1,21 @@
 const { ApolloServer } = require('apollo-server-express');
-const sch = require('./schema');
 const { root, me, tour, conversation } = require('./')
+const { rootSchema, meSchema, userSchema, tourSchema, reviewSchema, conversationSchema } = require('./')
 const AppError = require('../utils/appError');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { makeExecutableSchema } = require('graphql-tools');
-const { mergeSchemas, mergeSchemasAsync } = require('graphql-tools');
+// const { mergeSchemas, mergeSchemasAsync } = require('graphql-tools');
 
 
 const executableSchema = makeExecutableSchema({
-    typeDefs: sch,
+    typeDefs: [rootSchema, meSchema, userSchema, tourSchema, reviewSchema, conversationSchema],
     resolvers: [root, me, tour, conversation],
 });
 
-const schema = mergeSchemas({
-    schemas: [executableSchema]
-})
+// const schema = mergeSchemas({
+//     schemas: [executableSchema]
+// })
 // const { promisify } = require('util');
 
 const contextMid = (req, error, user, connection) => ({
@@ -27,7 +27,7 @@ const contextMid = (req, error, user, connection) => ({
 
 // GraphQL API
 const server = new ApolloServer({
-    schema,
+    schema: executableSchema,
     context: async ({req, connection}) => {
         try {
             if (connection) {

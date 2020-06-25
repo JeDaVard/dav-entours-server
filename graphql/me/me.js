@@ -1,6 +1,6 @@
-const {catchAsyncResolver} = require("../utils/catchAsyncResolver");
-const { User, Tour, Conversation, Review } = require('../models/')
-const { authLogin, authSignUp } = require('../controllers/auth');
+const {catchAsyncResolver} = require("../../utils/catchAsyncResolver");
+const { User, Tour, Conversation, Review } = require('../../models')
+const { authLogin, authSignUp } = require('../../controllers/auth');
 
 module.exports = {
     Query: {

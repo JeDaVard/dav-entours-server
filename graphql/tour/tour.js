@@ -1,5 +1,5 @@
-const {catchAsyncResolver} = require("../utils/catchAsyncResolver");
-const { User, Tour, Review } = require('../models/')
+const {catchAsyncResolver} = require("../../utils/catchAsyncResolver");
+const { User, Tour, Review } = require('../../models')
 
 module.exports = {
     Query: {
