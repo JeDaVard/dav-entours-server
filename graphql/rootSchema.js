@@ -40,9 +40,17 @@ module.exports = gql`
 			description: String
 		): TourMutationResponse
 		tourLocations(id: ID locations: [LocationInput]): TourMutationResponse
-		tourGallery(id: ID file: Upload!): TourMutationResponse
+		tourGallery(id: ID imageCover: String images: [String]!): TourMutationResponse
 		addTour: Tour
+		uploadImage(id: ID! fileName: String! contentType: String!): SignedURL
 	}
+    
+	
+	type SignedURL {
+		url: String
+		key: String
+	}
+	
 	scalar Upload
 	type Subscription {
 		messageAdded(convId: ID!): Message

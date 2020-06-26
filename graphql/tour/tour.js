@@ -1,5 +1,5 @@
 const {catchAsyncResolver} = require("../../utils/catchAsyncResolver");
-const { User, Tour, Review } = require('../../models')
+const { User, Tour, Review } = require('../../models');
 
 module.exports = {
     Query: {
@@ -74,12 +74,13 @@ module.exports = {
             'Error while creating a tour'
         ),
         tourGallery: catchAsyncResolver(
-            async (_, { id, file }, c) => {
-                const res = await file;
-                console.log(res)
+            async (_, { id, imageCover, images }, c) => {
+                const options = {};
+                if (imageCover) options.imageCover = imageCover;
+                if (images.length) options.images = images
 
-                const tour = await Tour.find({ _id: id })
-                return tour[0]
+                const tour = await Tour.findOneAndUpdate({ _id: id, author: c.user._id }, options, { new: true })
+                return tour
             },
             '200',
             'Successfully saved',

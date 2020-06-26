@@ -4,6 +4,8 @@ const { Kind } = require('graphql/language');
 const { User, Tour, Review } = require('../models/')
 const { authLogin, authSignUp } = require('../controllers/auth');
 
+const s3 = require('../s3')
+
 module.exports = {
     Query: {
         users: async () => {
@@ -47,7 +49,21 @@ module.exports = {
         addTour: () => {
         },
         login: async (_, args, c) => await authLogin(args),
-        signUp: async (_, args) => await authSignUp(args)
+        signUp: async (_, args) => await authSignUp(args),
+        uploadImage: async (_, { id, fileName, contentType }, c) => {
+            const key = `users/${c.user._id}/tours/${id}/${fileName}`
+
+            const url = await s3.getSignedUrl('putObject', {
+                Bucket: process.env.AWS_ENTOURS_BUCKET,
+                ContentType: contentType,
+                Key: key
+            })
+
+            return {
+                url,
+                key
+            }
+        }
     },
     Subscription: {
         //
