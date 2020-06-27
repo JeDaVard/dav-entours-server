@@ -1,6 +1,12 @@
 const { ApolloError } = require('apollo-server-express')
 
-const catchAsyncResolver = (resolver, code = '200', message = 'Done Successfully!', errorCode, errorMessage) => {
+const catchAsyncResolver = (
+    resolver,
+    code = '200',
+    message = 'Done Successfully!',
+    errorCode = '400',
+    errorMessage = 'Error while handling the request'
+) => {
     return async (parent, args, context, info) => {
         try {
             const data = await resolver(parent, args, context, info);
@@ -14,7 +20,7 @@ const catchAsyncResolver = (resolver, code = '200', message = 'Done Successfully
         } catch (e) {
             throw new ApolloError(
                 !(process.env.NODE_ENV === 'development') ? errorMessage : e.message
-                , errorCode || 500
+                , errorCode
             )
         }
     }

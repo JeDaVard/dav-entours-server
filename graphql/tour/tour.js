@@ -26,12 +26,7 @@ module.exports = {
                     maxGroupSize,
                 }
                 return Tour.create(options);
-            },
-            '200',
-            'Successfully created',
-            '400',
-            'Error while creating a tour'
-        ),
+            }),
         tourHeading: catchAsyncResolver(
             async (_, { id, name, difficulty, maxGroupSize, hashtags, price }, c) => {
                 const options = {
@@ -43,22 +38,12 @@ module.exports = {
                 }
                 const tour = await Tour.findOneAndUpdate({ _id: id, author: c.user._id }, options)
                 return tour
-            },
-            '200',
-            'Successfully saved',
-            '400',
-            'Error while creating a tour'
-        ),
+            }),
         tourLocations: catchAsyncResolver(
             async (_, { id, locations }, c) => {
                 const tour = await Tour.findOneAndUpdate({ _id: id, author: c.user._id }, { locations })
                 return tour
-            },
-            '200',
-            'Successfully saved',
-            '400',
-            'Error while creating a tour'
-        ),
+            }),
         tourDetails: catchAsyncResolver(
             async (_, { id, description, summary }, c) => {
                 const options = {
@@ -66,14 +51,8 @@ module.exports = {
                     description
                 }
 
-                const tour = await Tour.findOneAndUpdate({ _id: id, author: c.user._id }, options)
-                return tour
-            },
-            '200',
-            'Successfully saved',
-            '400',
-            'Error while creating a tour'
-        ),
+                return await Tour.findOneAndUpdate({_id: id, author: c.user._id}, options)
+            }),
         tourGallery: catchAsyncResolver(
             async (_, { id, imageCover, images, removeImage }, c) => {
                 const options = {
@@ -89,12 +68,7 @@ module.exports = {
 
                 const tour = await Tour.findOneAndUpdate({ _id: id, author: c.user._id }, options, { new: true })
                 return tour
-            },
-            '200',
-            'Successfully saved',
-            '400',
-            'Error while creating a tour'
-        ),
+            }),
     }
 };
 
