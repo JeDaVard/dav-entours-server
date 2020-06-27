@@ -66,7 +66,7 @@ module.exports = {
         }
     },
     Subscription: {
-        //
+        ////
     },
     Date: new GraphQLScalarType({
         name: 'Date',

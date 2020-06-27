@@ -1,5 +1,6 @@
 const {catchAsyncResolver} = require("../../utils/catchAsyncResolver");
 const { User, Tour, Review } = require('../../models');
+const s3 = require('../../s3');
 
 module.exports = {
     Query: {
@@ -74,10 +75,17 @@ module.exports = {
             'Error while creating a tour'
         ),
         tourGallery: catchAsyncResolver(
-            async (_, { id, imageCover, images }, c) => {
-                const options = {};
-                if (imageCover) options.imageCover = imageCover;
-                if (images.length) options.images = images
+            async (_, { id, imageCover, images, removeImage }, c) => {
+                const options = {
+                    imageCover: imageCover || '',
+                    images: images || []
+                };
+
+                if (removeImage) {
+                    s3.deleteObject({ Bucket: process.env.AWS_ENTOURS_BUCKET, Key: removeImage }, (e,r) => {
+                        if (e) console.log(e)
+                    })
+                }
 
                 const tour = await Tour.findOneAndUpdate({ _id: id, author: c.user._id }, options, { new: true })
                 return tour
