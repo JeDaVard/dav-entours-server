@@ -21,9 +21,9 @@ module.exports = gql`
 		reviews: [Review]
 		conversations: [Conversation]
 		conversation(id: ID!, page: Int, limit: Int): Conversation
-		saved: [Tour]
+		saved: [Tour]!
 		myTour(slug: String!): Tour
-		draft: [Tour]
+		draft: [Tour]!
 	}
 	input LoginInput {
 		email: String!

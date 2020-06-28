@@ -23,9 +23,20 @@ module.exports = {
         conversation: async (_, { id }) => await Conversation.findOne({ _id: id }),
     },
     Mutation: {
-        addTour: () => {
-        },
         login: async (_, args, c) => await authLogin(args),
-        signUp: async (_, args) => await authSignUp(args)
+        signUp: async (_, args) => await authSignUp(args),
+        saveTour: async (_, { id }, c) => {
+            const user = await User.findById(c.user._id);
+            user.saved.push(id);
+            await user.save();
+            const tours = await Tour.find({_id: {$in: user.saved}})
+            return tours;
+        },
+        removeSavedTour: async (_, { id }, c) => {
+            const user = await User.findById(c.user._id);
+            user.saved = user.saved.filter(tour => tour.toString() !== id);
+            await user.save();
+            return await Tour.find({_id: {$in: user.saved}});
+        }
     },
 };

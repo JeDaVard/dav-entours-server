@@ -1,6 +1,7 @@
 const {catchAsyncResolver} = require("../../utils/catchAsyncResolver");
 const { User, Tour, Review } = require('../../models');
-const s3 = require('../../s3');
+const { deleteObjects } = require('../../s3');
+
 
 module.exports = {
     Query: {
@@ -36,12 +37,12 @@ module.exports = {
                     hashtags: hashtags.length ? hashtags.split(',') : [],
                     price
                 }
-                const tour = await Tour.findOneAndUpdate({ _id: id, author: c.user._id }, options)
+                const tour = await Tour.findOneAndUpdate({ _id: id, author: c.user._id }, options, {new: true})
                 return tour
             }),
         tourLocations: catchAsyncResolver(
             async (_, { id, locations }, c) => {
-                const tour = await Tour.findOneAndUpdate({ _id: id, author: c.user._id }, { locations })
+                const tour = await Tour.findOneAndUpdate({ _id: id, author: c.user._id }, { locations }, {new: true})
                 return tour
             }),
         tourDetails: catchAsyncResolver(
@@ -51,7 +52,7 @@ module.exports = {
                     description
                 }
 
-                return await Tour.findOneAndUpdate({_id: id, author: c.user._id}, options)
+                return await Tour.findOneAndUpdate({_id: id, author: c.user._id}, options, {new: true})
             }),
         tourGallery: catchAsyncResolver(
             async (_, { id, imageCover, images, removeImage }, c) => {
@@ -60,14 +61,9 @@ module.exports = {
                     images: images || []
                 };
 
-                if (removeImage) {
-                    s3.deleteObject({ Bucket: process.env.AWS_ENTOURS_BUCKET, Key: removeImage }, (e,r) => {
-                        if (e) console.log(e)
-                    })
-                }
+                if (removeImage) deleteObjects(removeImage)
 
-                const tour = await Tour.findOneAndUpdate({ _id: id, author: c.user._id }, options, { new: true })
-                return tour
+                return await Tour.findOneAndUpdate({_id: id, author: c.user._id}, options, {new: true})
             }),
     }
 };

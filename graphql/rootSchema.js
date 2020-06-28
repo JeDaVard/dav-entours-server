@@ -46,8 +46,9 @@ module.exports = gql`
             images: [String]!
             removeImage: String
         ): TourMutationResponse
-		addTour: Tour
 		uploadImage(id: ID! fileName: String! contentType: String!): SignedURL
+        saveTour(id: ID!): [Tour]!
+        removeSavedTour(id: ID!): [Tour]!
 	}
     
 	

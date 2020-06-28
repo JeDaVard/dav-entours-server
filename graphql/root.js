@@ -4,7 +4,7 @@ const { Kind } = require('graphql/language');
 const { User, Tour, Review } = require('../models/')
 const { authLogin, authSignUp } = require('../controllers/auth');
 
-const s3 = require('../s3')
+const { s3 } = require('../s3')
 
 module.exports = {
     Query: {
@@ -46,8 +46,6 @@ module.exports = {
         },
     },
     Mutation: {
-        addTour: () => {
-        },
         login: async (_, args, c) => await authLogin(args),
         signUp: async (_, args) => await authSignUp(args),
         uploadImage: async (_, { id, fileName, contentType }, c) => {
