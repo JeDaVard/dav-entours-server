@@ -6,7 +6,7 @@ const { deleteObjects } = require('../../s3');
 module.exports = {
     Query: {
         tours: async () => {
-            const tours = await Tour.find().sort('-createdAt').limit(4)
+            const tours = await Tour.find().sort('-createdAt')
             return tours
         },
         tour: async (_, { id }) => await Tour.findOne({ slug: id }),
