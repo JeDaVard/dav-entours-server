@@ -6,7 +6,7 @@ const AppError = require('../utils/appError');
 exports.setCookies = (res, authData, invalidate) => {
     const options = {
         httpOnly: true,
-        // sameSite: 'Lax',
+        sameSite: 'None',
         secure: process.env.NODE_ENV === 'production',
         expires: invalidate
             ? new Date(Date.now() + 2000)
@@ -15,6 +15,7 @@ exports.setCookies = (res, authData, invalidate) => {
 
     const nameOptions = {...options};
     nameOptions.httpOnly = false;
+    nameOptions.secure = false;
 
     res.cookie('authToken', authData ? authData.token : '', options )
     res.cookie('exp', authData ? authData.expires : '', options )
