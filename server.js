@@ -22,7 +22,7 @@ const cors = {
         //         callback(new AppError("Not allowed by CORS", 403))
         //     }
         // }
-        origin: 'http://localhost:3000',
+        origin: process.env.CLIENT,
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
         preflightContinue: false,
         optionsSuccessStatus: 204,
