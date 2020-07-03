@@ -26,6 +26,7 @@ module.exports = {
     Mutation: {
         login: async (_, args, c) => {
             const authData = await authLogin(args)
+            res.cookie('testCookieKey', 'TestcookieValue')
             setCookies(c.res, authData)
             return authData.user
         },

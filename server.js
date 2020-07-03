@@ -10,7 +10,6 @@ const redis = require('./services/redis');
 const cors = {
         credentials: true,
         origin: (origin, callback) => {
-            console.log(process.env.NODE_ENV, process.env.CLIENT, 'envs')
             if (process.env.NODE_ENV === 'development') return callback(null, true);
             if (process.env.NODE_ENV === 'production') return callback(null, true);
             const whitelist = [
