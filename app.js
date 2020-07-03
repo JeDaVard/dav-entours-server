@@ -1,12 +1,12 @@
 const express = require('express');
 const path = require('path');
-const cors = require('cors');
+// const cors = require('cors');
 const errorController = require('./middleware/error');
-// const cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
-app.use(cors());
+// app.use(cors());
 
 //// MIDDLEWARE \\\\
 // SECURITY
@@ -22,7 +22,7 @@ app.use(cors());
 //     next();
 // });
 // MAIN
-// app.use(cookieParser());
+app.use(cookieParser());
 app.use(express.json({ limit: '20kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(express.static(path.join(__dirname, 'static')));

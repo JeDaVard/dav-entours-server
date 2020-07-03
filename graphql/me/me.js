@@ -2,6 +2,25 @@ const {catchAsyncResolver} = require("../../utils/catchAsyncResolver");
 const { User, Tour, Conversation, Review } = require('../../models')
 const { authLogin, authSignUp } = require('../../controllers/auth');
 
+const setCookies = (res, authData, invalidate) => {
+    const options = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        expires: invalidate
+            ? new Date(Date.now() + 2000)
+            : new Date(Date.now() + authData.expires)
+    }
+    res.cookie('authToken', authData ? authData.token : '', options )
+    res.cookie('exp', authData ? authData.expires : '', options )
+    res.cookie('userId', authData ? authData.user._id.toString() : '', {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        expires: invalidate
+            ? new Date(Date.now() + 2000)
+            : new Date(Date.now() + authData.expires)
+    } )
+}
+
 module.exports = {
     Query: {
         me: async (_, __, c ) => await User.findOne({_id: c.user._id})
@@ -23,8 +42,20 @@ module.exports = {
         conversation: async (_, { id }) => await Conversation.findOne({ _id: id }),
     },
     Mutation: {
-        login: async (_, args, c) => await authLogin(args),
-        signUp: async (_, args) => await authSignUp(args),
+        login: async (_, args, c) => {
+            const authData = await authLogin(args)
+            setCookies(c.res, authData)
+            return authData.user
+        },
+        signUp: async (_, args, c) => {
+            const authData = await authSignUp(args)
+            setCookies(c.res, authData)
+            return authData.user
+        },
+        signOut: async (_, __, c) => {
+            setCookies(c.res, null, true)
+            return null
+        },
         saveTour: async (_, { id }, c) => {
             const user = await User.findById(c.user._id);
             user.saved.push(id);

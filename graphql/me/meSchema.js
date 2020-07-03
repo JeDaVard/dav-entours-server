@@ -34,10 +34,4 @@ module.exports = gql`
 		Password: String!
 		name: String!
 	}
-
-	type AuthData {
-		token: String!
-		expires: String!
-		user: User
-	}
 `

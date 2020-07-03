@@ -4,7 +4,7 @@ const { Kind } = require('graphql/language');
 const { User, Tour, Review } = require('../models/')
 const { authLogin, authSignUp } = require('../controllers/auth');
 
-const { s3 } = require('../s3')
+const { s3 } = require('../services/s3')
 
 module.exports = {
     Query: {

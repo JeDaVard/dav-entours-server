@@ -19,8 +19,9 @@ module.exports = gql`
 		me: MeMutationResponse
 		sendMessage(convId: ID!, text: String!): MessageMutationResponse
 		removeMessage(id: ID!): MessageMutationResponse
-		login(email: String!, password: String!): AuthData
-		signUp(email: String!, password: String!, name: String!): AuthData
+		login(email: String!, password: String!): Me!
+		signUp(email: String!, password: String!, name: String!): Me!
+		signOut: String
 		makeATour(
 			name: String!
 			difficulty: String!

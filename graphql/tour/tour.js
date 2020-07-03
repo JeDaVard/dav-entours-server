@@ -1,6 +1,6 @@
 const {catchAsyncResolver} = require("../../utils/catchAsyncResolver");
 const { User, Tour, Review } = require('../../models');
-const { deleteObjects } = require('../../s3');
+const { deleteObjects } = require('../../services/s3');
 
 
 module.exports = {
