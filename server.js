@@ -11,7 +11,6 @@ const cors = {
         credentials: true,
         origin: (origin, callback) => {
             if (process.env.NODE_ENV === 'development') return callback(null, true);
-            if (process.env.NODE_ENV === 'production') return callback(null, true);
             const whitelist = [
                 process.env.CLIENT,
             ];
