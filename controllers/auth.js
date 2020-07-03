@@ -16,6 +16,10 @@ exports.setCookies = (res, authData, invalidate) => {
     const nameOptions = {...options};
     nameOptions.httpOnly = false;
 
+    console.log(options, 'options')
+    console.log(nameOptions, 'nameOptions')
+    console.log(authData, 'authData')
+
     res.cookie('authToken', authData ? authData.token : '', options )
     res.cookie('exp', authData ? authData.expires : '', options )
     res.cookie('userId', authData ? authData.user._id.toString() : '', nameOptions )
