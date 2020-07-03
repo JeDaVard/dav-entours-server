@@ -30,7 +30,6 @@ const server = new ApolloServer({
                 return connection.context
             } else {
                 const token = req.cookies.authToken;
-                console.log('cookies', typeof req.cookies, req.cookies, 'cookies')
                 if (!token) return contextMid({req, res});
 
                 const decoded = await jwt.verify(token, process.env.JWT_SECRET, (e, payload) => e || payload);

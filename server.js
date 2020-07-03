@@ -9,23 +9,23 @@ const redis = require('./services/redis');
 
 const cors = {
         credentials: true,
-        origin: (origin, callback) => {
-            if (process.env.NODE_ENV === 'development') return callback(null, true);
-            if (process.env.NODE_ENV === 'production') return callback(null, true);
-            const whitelist = [
-                process.env.CLIENT,
-            ];
-
-            if (whitelist.indexOf(origin) !== -1) {
-                callback(null, true)
-            } else {
-                callback(new AppError("Not allowed by CORS", 403))
-            }
-        }
-        // origin: 'http://localhost:3000',
-        // methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-        // preflightContinue: false,
-        // optionsSuccessStatus: 204,
+        // origin: (origin, callback) => {
+        //     if (process.env.NODE_ENV === 'development') return callback(null, true);
+        //     if (process.env.NODE_ENV === 'production') return callback(null, true);
+        //     const whitelist = [
+        //         process.env.CLIENT,
+        //     ];
+        //
+        //     if (whitelist.indexOf(origin) !== -1) {
+        //         callback(null, true)
+        //     } else {
+        //         callback(new AppError("Not allowed by CORS", 403))
+        //     }
+        // }
+        origin: 'http://localhost:3000',
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+        preflightContinue: false,
+        optionsSuccessStatus: 204,
     }
 
 server.applyMiddleware({ app, cors });
