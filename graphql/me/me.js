@@ -1,25 +1,7 @@
 const {catchAsyncResolver} = require("../../utils/catchAsyncResolver");
 const { User, Tour, Conversation, Review } = require('../../models')
-const { authLogin, authSignUp } = require('../../controllers/auth');
+const { authLogin, authSignUp, setCookies } = require('../../controllers/auth');
 
-const setCookies = (res, authData, invalidate) => {
-    const options = {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        expires: invalidate
-            ? new Date(Date.now() + 2000)
-            : new Date(Date.now() + authData.expires)
-    }
-    res.cookie('authToken', authData ? authData.token : '', options )
-    res.cookie('exp', authData ? authData.expires : '', options )
-    res.cookie('userId', authData ? authData.user._id.toString() : '', {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        expires: invalidate
-            ? new Date(Date.now() + 2000)
-            : new Date(Date.now() + authData.expires)
-    } )
-}
 
 module.exports = {
     Query: {

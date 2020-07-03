@@ -39,13 +39,13 @@ const server = new ApolloServer({
                 const currentUser = await User.findById(decoded.id);
                 if (!currentUser) return contextMid({req, res,
                     error: {message: 'User does no longer exist.'}})
-
                 if (currentUser.changedPasswordAfter(decoded.iat)) return contextMid({req, res,
                         error: {message: 'You recently changed your password! Please login again.'}})
 
                 return contextMid({req, res, user: currentUser})
             }
         } catch (error) {
+            console.log(error)
             return contextMid({
                 req,
                 error
