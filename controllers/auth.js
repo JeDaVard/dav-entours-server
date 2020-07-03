@@ -16,6 +16,7 @@ exports.setCookies = (res, authData, invalidate) => {
     const nameOptions = {...options};
     nameOptions.httpOnly = false;
     nameOptions.secure = false;
+    delete nameOptions.sameSite
 
     res.cookie('authToken', authData ? authData.token : '', options )
     res.cookie('exp', authData ? authData.expires : '', options )
