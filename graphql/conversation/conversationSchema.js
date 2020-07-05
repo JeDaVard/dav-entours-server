@@ -15,12 +15,11 @@ module.exports = gql`
 	}
 	type Conversation {
 		_id: ID!
-		createdAt: Date
-		messages(page: Int, limit: Int): MessagesResponse
+		start: Start
 		tour: Tour
-		guides: [User]
-		participants: [User]
+		messages(page: Int, limit: Int): MessagesResponse
 		lastMessage: Message
+		createdAt: Date
 	}
 	type Message {
 		_id: ID!

@@ -17,8 +17,8 @@ module.exports = gql`
 	}
 	type Mutation {
 		me: MeMutationResponse
-		sendMessage(convId: ID!, text: String!): MessageMutationResponse
-		removeMessage(id: ID!): MessageMutationResponse
+		sendMessage(convId: ID!, text: String! isImage:Boolean): MessageMutationResponse
+		removeMessage(id: ID! key: String): MessageMutationResponse
 		login(email: String!, password: String!): Me!
 		signUp(email: String!, password: String!, name: String!): Me!
 		signOut: String
@@ -47,7 +47,12 @@ module.exports = gql`
             images: [String]!
             removeImage: String
         ): TourMutationResponse
-		uploadImage(id: ID! fileName: String! contentType: String!): SignedURL
+		uploadImage(
+			id: ID!
+			fileName: String!
+			contentType: String!
+			genre: String!
+		): SignedURL
         saveTour(id: ID!): [Tour]!
         removeSavedTour(id: ID!): [Tour]!
 	}

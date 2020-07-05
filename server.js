@@ -7,6 +7,7 @@ const server = require('./graphql')
 const AppError = require('./utils/appError');
 const redis = require('./services/redis');
 
+
 const cors = {
         credentials: true,
         origin: (origin, callback) => {

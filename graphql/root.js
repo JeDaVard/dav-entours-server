@@ -1,21 +1,15 @@
 const { GraphQLScalarType } = require('graphql')
 const { Kind } = require('graphql/language');
 
-const { User, Tour, Review } = require('../models/')
+const { User, Tour, Review, Start } = require('../models/')
 const { authLogin, authSignUp } = require('../controllers/auth');
 
 const { s3 } = require('../services/s3')
 
 module.exports = {
     Query: {
-        users: async () => {
-            const users = await User.find().sort('-createdAt').limit(4)
-            return users
-        },
-        user: async (_, { id }) => {
-            const user = await User.findOne({_id: id })
-            return user
-        },
+        users: async () => await User.find().sort('-createdAt').limit(4),
+        user: async (_, { id }) => await User.findOne({_id: id}),
     },
     MutationResponse: {
         // this is because of a strange requirement of graphql apollo
@@ -23,33 +17,28 @@ module.exports = {
             return null;
         }
     },
+    Start: {
+        tour: async parent => await Tour.findById(parent.tour),
+        participants: async parent => await User.find({_id: {$in: parent.participants}}),
+        staff: async parent => await User.find({_id: {$in: parent.staff}})
+    },
     Review: {
-        tour: async parent => {
-            const tours = await Tour.findById(parent.tour)
-            return tours
-},
-        author: async parent => {
-            const author = await User.findById(parent.author)
-            return author
-        }
+        tour: async parent => await Tour.findById(parent.tour),
+        author: async parent => await User.findById(parent.author)
     },
     User: {
-        tours: async parent => {
-            const tours = await Tour.find({author: parent._id })
-            return tours
-        },
+        tours: async parent => await Tour.find({author: parent._id }),
         // reviews: async parent => await Review.find({tourAuthor: parent._id}),
         reviews: async parent => {
             const tourIds = await Tour.find({author: parent._id})
-            const reviews = await Review.find({tour: {$in: tourIds}})
-            return reviews
+            return await Review.find({tour: {$in: tourIds}})
         },
     },
     Mutation: {
         login: async (_, args, c) => await authLogin(args),
         signUp: async (_, args) => await authSignUp(args),
-        uploadImage: async (_, { id, fileName, contentType }, c) => {
-            const key = `users/${c.user._id}/tours/${id}/${fileName}`
+        uploadImage: async (_, { id, fileName, contentType, genre }, c) => {
+            const key = `users/${c.user._id}/${genre}/${id}/${fileName}`
 
             const url = await s3.getSignedUrl('putObject', {
                 Bucket: process.env.AWS_ENTOURS_BUCKET,

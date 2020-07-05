@@ -1,8 +1,9 @@
+const {deleteObjects} = require("../../services/s3");
 const { PubSub, withFilter } = require('apollo-server-express');
 
 const pubsub = new PubSub();
 
-const { User, Tour, Message} = require('../../models')
+const { User, Tour, Message, Start} = require('../../models')
 const { catchAsyncResolver } = require('../../utils/catchAsyncResolver');
 
 module.exports = {
@@ -22,13 +23,8 @@ module.exports = {
                 messages: messages.docs
             }
         },
+        start: async parent => await Start.findOne({_id: parent.start}),
         tour: async parent => await Tour.findOne({_id: parent.tour}),
-        participants: async parent => await User.find({_id: { $in: parent.participants }}),
-        guides: async parent => {
-            const tour = await Tour.findOne({_id: parent.tour})
-            const guides = [tour.author, ...tour.guides]
-            return await User.find({ _id: { $in: guides }})
-        },
         lastMessage: async parent => await Message.findOne({ conversation: parent._id }).sort('-createdAt').limit(1)
     },
     Message: {
@@ -36,19 +32,26 @@ module.exports = {
     },
     Mutation: {
         removeMessage: catchAsyncResolver(
-            async (_, { id }, c) => await Message.findOneAndUpdate({_id: id, sender: c.user._id}, {text: '[Removed]'}, {new : true}),
+            async (_, { id, key }, c) => {
+                if (key) deleteObjects(key);
+
+                return await Message.findOneAndUpdate({_id: id, sender: c.user._id}, {text: '[Removed]'}, {new : true})
+            },
             '200',
             'Successfully removed',
             '400',
             'Error, failed to remove message',
         ),
         sendMessage: catchAsyncResolver(
-            async (_, { text, convId }, c) => {
-                const isImage = text.endsWith('.jpg')
+            async (_, { text, convId, isImage }, c) => {
+                const wasImage = text.endsWith('.jpg')
                     || text.endsWith('.jpeg')
                     || text.endsWith('.png') && !text.match(/\s+/g);
 
-                const message = await Message.create({sender: c.user._id, text, conversation: convId, isImage});
+                const asImage = wasImage || isImage
+
+                const message = await Message.create({
+                    sender: c.user._id, text, conversation: convId, isImage: asImage});
                 await pubsub.publish(`CONVERSATION_${convId}`, { messageAdded: message })
                 return message
             },

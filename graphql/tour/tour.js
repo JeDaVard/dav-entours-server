@@ -1,5 +1,5 @@
 const {catchAsyncResolver} = require("../../utils/catchAsyncResolver");
-const { User, Tour, Review } = require('../../models');
+const { User, Tour, Review, Start } = require('../../models');
 const { deleteObjects } = require('../../services/s3');
 
 
@@ -14,8 +14,8 @@ module.exports = {
     Tour: {
         author: async parent => await User.findOne({_id: parent.author }),
         guides: async parent => await User.find({_id: { $in: parent.guides }}),
-        participants: async parent => await User.find({_id: { $in: parent.participants }}),
-        reviews: async parent => await Review.find({tour: { $in: parent._id }})
+        reviews: async parent => await Review.find({tour: { $in: parent._id }}),
+        starts: async parent => await Start.find({tour: { $in: parent._id }})
     },
     Mutation: {
         makeATour: catchAsyncResolver(

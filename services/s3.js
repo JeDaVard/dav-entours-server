@@ -11,12 +11,15 @@ function deleteObjects(removeImage) {
     s3.deleteObject({ Bucket: process.env.AWS_ENTOURS_BUCKET, Key: removeImage }, (e,r) => {
         if (e) console.log(e)
     });
-    s3.deleteObjects({ Bucket: process.env.AWS_ENTOURS_CDN_BUCKET, Delete: {
-            Objects: [
-                {Key: removeImage.slice(0, removeImage.length - 4)+'.thumb.jpg'},
-                {Key: removeImage},
-                {Key: removeImage.slice(0, removeImage.length - 4)+'.large.jpg'},
-            ]}
+    const Objects = removeImage.includes('/tours/')
+        ? [
+            {Key: removeImage.slice(0, removeImage.length - 4)+'.thumb.jpg'},
+            {Key: removeImage},
+            {Key: removeImage.slice(0, removeImage.length - 4)+'.large.jpg'},
+            ]
+        : [ {Key: removeImage} ];
+
+    s3.deleteObjects({ Bucket: process.env.AWS_ENTOURS_CDN_BUCKET, Delete: { Objects }
     }, (e,r) => {
         if (e) console.log(e)
     })

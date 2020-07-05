@@ -6,6 +6,14 @@ module.exports = gql`
 		MEDIUM
 		HARD
 	}
+	type Start {
+		_id: ID!
+		date: Date!
+		tour: Tour!
+		participants: [User]!
+		staff: [User]!
+		createdAt: Date
+	}
 	type TourMutationResponse implements MutationResponse {
 		code: String!
 		success: Boolean!
@@ -19,7 +27,6 @@ module.exports = gql`
 		name: String!
 		author: User
 		guides: [User]
-		participants: [User]
 		reviews: [Review]
 		slug: ID!
 		hashtags: [String]
@@ -36,7 +43,7 @@ module.exports = gql`
 		priceDiscount: Int
 		ratingsAverage: String
 		ratingsQuantity: Int
-		startDates: [String]
+		starts: [Start]
 		startLocation: Location
 		locations: [Location]
 		draft: Boolean
