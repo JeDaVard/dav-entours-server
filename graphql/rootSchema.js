@@ -7,6 +7,11 @@ module.exports = gql`
 		success: Boolean!
 		message: String!
 	}
+	interface PaginatedResponse {
+		hasMore: Boolean
+		nextPage: Int
+		total: Int
+	}
 	type Query {
 		users: [User]
 		user(id: ID!): User

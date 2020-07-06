@@ -27,7 +27,7 @@ module.exports = gql`
 		name: String!
 		author: User
 		guides: [User]
-		reviews: [Review]
+		reviews(page: Int, limit: Int): ReviewsResponse
 		slug: ID!
 		hashtags: [String]
 		summary: String

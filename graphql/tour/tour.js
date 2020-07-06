@@ -1,3 +1,4 @@
+const {asyncPaginated} = require("../../utils/catchAsyncResolver");
 const {catchAsyncResolver} = require("../../utils/catchAsyncResolver");
 const { User, Tour, Review, Start } = require('../../models');
 const { deleteObjects } = require('../../services/s3');
@@ -14,7 +15,9 @@ module.exports = {
     Tour: {
         author: async parent => await User.findOne({_id: parent.author }),
         guides: async parent => await User.find({_id: { $in: parent.guides }}),
-        reviews: async parent => await Review.find({tour: { $in: parent._id }}),
+        // reviews: async parent => await Review.find({tour: { $in: parent._id }}),
+        reviews: asyncPaginated(Review,
+                parent => Review.find({tour: { $in: parent._id }})),
         starts: async parent => await Start.find({tour: { $in: parent._id }})
     },
     Mutation: {

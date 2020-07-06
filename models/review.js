@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const Tour = require('./tour')
+const mongoosePaginate = require('mongoose-paginate-v2');
+const Tour = require('./tour');
 
 const reviewSchema = new mongoose.Schema(
     {
@@ -88,6 +89,8 @@ reviewSchema.pre(/^findOneAnd/, async function(next) {
 reviewSchema.post(/^findOneAnd/, async function() {
     await this.r.constructor.calcAverageRatings(this.r.tour);
 });
+
+reviewSchema.plugin(mongoosePaginate)
 
 const Review = mongoose.model('Review', reviewSchema);
 

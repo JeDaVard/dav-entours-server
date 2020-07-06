@@ -1,3 +1,4 @@
+const {asyncPaginated} = require("../../utils/catchAsyncResolver");
 const {deleteObjects} = require("../../services/s3");
 const { PubSub, withFilter } = require('apollo-server-express');
 
@@ -6,23 +7,11 @@ const pubsub = new PubSub();
 const { User, Tour, Message, Start} = require('../../models')
 const { catchAsyncResolver } = require('../../utils/catchAsyncResolver');
 
+
 module.exports = {
     Conversation: {
-        messages: async (parent, { page, limit }) => {
-            // console.log(parent)
-            const messagesQuery = Message.find({conversation: parent._id}).sort('-createdAt')
-            const options = {
-                page: page || 1,
-                limit: limit || 0
-            };
-            const messages = await Message.paginate(messagesQuery, options);
-            return {
-                hasMore: messages.hasNextPage,
-                nextPage: messages.nextPage,
-                total: messages.totalDocs,
-                messages: messages.docs
-            }
-        },
+        messages: asyncPaginated( Message,
+            (parent) => Message.find({conversation: parent._id}).sort('-createdAt')),
         start: async parent => await Start.findOne({_id: parent.start}),
         tour: async parent => await Tour.findOne({_id: parent.tour}),
         lastMessage: async parent => await Message.findOne({ conversation: parent._id }).sort('-createdAt').limit(1)
@@ -46,12 +35,13 @@ module.exports = {
             async (_, { text, convId, isImage }, c) => {
                 const wasImage = text.endsWith('.jpg')
                     || text.endsWith('.jpeg')
+                    || text.endsWith('.gif')
                     || text.endsWith('.png') && !text.match(/\s+/g);
 
                 const asImage = wasImage || isImage
 
                 const message = await Message.create({
-                    sender: c.user._id, text, conversation: convId, isImage: asImage});
+                    sender: c.user._id, text, conversation: convId, isImage: asImage || false});
                 await pubsub.publish(`CONVERSATION_${convId}`, { messageAdded: message })
                 return message
             },

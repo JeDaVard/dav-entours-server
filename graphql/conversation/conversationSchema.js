@@ -1,17 +1,17 @@
 const { gql } = require('apollo-server-express');
 
-module.exports = gql`
+module.exports = gql`	
 	type MessageMutationResponse implements MutationResponse {
 		code: String!
 		success: Boolean!
 		message: String!
 		data: Message
 	}
-	type MessagesResponse {
+	type MessagesResponse implements PaginatedResponse {
 		hasMore: Boolean
 		nextPage: Int
 		total: Int
-		messages: [Message]
+		data: [Message]
 	}
 	type Conversation {
 		_id: ID!
