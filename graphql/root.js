@@ -1,3 +1,4 @@
+const {asyncPaginated} = require("../utils/catchAsyncResolver");
 const { GraphQLScalarType } = require('graphql')
 const { Kind } = require('graphql/language');
 
@@ -28,11 +29,10 @@ module.exports = {
     },
     User: {
         tours: async parent => await Tour.find({author: parent._id }),
-        // reviews: async parent => await Review.find({tourAuthor: parent._id}),
-        reviews: async parent => {
-            const tourIds = await Tour.find({author: parent._id})
-            return await Review.find({tour: {$in: tourIds}})
-        },
+        reviews: asyncPaginated(Review,
+                parent => Review.find({tourAuthor: parent._id}).sort('-createdAt')),
+        ownReviews: asyncPaginated(Review,
+            parent => Review.find({author: parent._id}).sort('-createdAt')),
     },
     Mutation: {
         login: async (_, args, c) => await authLogin(args),

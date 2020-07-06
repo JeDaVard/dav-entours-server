@@ -15,9 +15,8 @@ module.exports = gql`
 		speaks: [String]
 		role(role: Role): String
 		tours: [Tour]
-		reviews: [Review]
+		reviews(page: Int, limit: Int): ReviewsResponse
+		ownReviews(page: Int, limit: Int): ReviewsResponse
 		draft: [Tour]
-		#remove the following
-		conversations: [Conversation]
 	}
 `
