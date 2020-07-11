@@ -1,11 +1,12 @@
 const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { Tour, User, Order } = require('../models')
 
 const router = express.Router();
 
+
 router.post("/stripe",async (req, res) => {
     let data, eventType;
-        console.log(req.rawBody)
     // Check if webhook signing is configured.
     if (process.env.STRIPE_WEBHOOK_SECRET) {
         // Retrieve the event by verifying the signature using the raw body and secret.
@@ -31,10 +32,19 @@ router.post("/stripe",async (req, res) => {
     }
 
     if (eventType === "payment_intent.succeeded") {
-        // Funds have been captured
-        // Fulfill any orders, e-mail receipts, etc
         // To cancel the payment after capture you will need to issue a Refund (https://stripe.com/docs/api/refunds)
-        console.log("💰 Payment captured!");
+
+        // Create an order
+        const { tour, buyer, start, invited } = req.body.data.object.metadata;
+        const { amount } = req.body.data.object
+
+        const order = await Order.create({
+            tour,
+            buyer,
+            start,
+            amount: amount / 100,
+            invited: invited ? invited.split(',') : []
+        });
     } else if (eventType === "payment_intent.payment_failed") {
         console.log("❌ Payment failed.");
     } else if (eventType === "charge.succeeded") {

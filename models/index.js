@@ -4,5 +4,6 @@ module.exports = {
     Review: require('./review'),
     Conversation: require('./conversation'),
     Message: require('./message'),
-    Start: require('./start')
+    Start: require('./start'),
+    Order: require('./order')
 }

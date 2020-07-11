@@ -1,6 +1,16 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
+    // status: {
+    //     type: String,
+    //     enum: ['Confirmed', 'Failed', 'In progress'],
+    //     default: 'In progress'
+    // },
+    buyer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: [true, 'Order must belong to a buyer']
+    },
     tour: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Tour',
@@ -11,15 +21,16 @@ const orderSchema = new mongoose.Schema({
         ref: 'Start',
         required: [true, 'Order must be based on a starting date']
     },
-    price: {
+    amount: {
         type: Number,
         required: [true, 'Order must have a price']
     },
-    buyer: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: [true, 'Order must belong to a buyer']
-    }
+    invited: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    ]
 }, {
     timestamps: true
 })

@@ -17,7 +17,6 @@ app.use(express.json({
     //this is for req.rowBody in stripe webhooks
     verify: function(req, res, buf) {
         const url = req.originalUrl;
-        console.log(url)
         if (url.startsWith('/webhooks/stripe')) {
             req.rawBody = buf.toString()
         }
