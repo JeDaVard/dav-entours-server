@@ -52,6 +52,7 @@ module.exports = gql`
             images: [String]!
             removeImage: String
         ): TourMutationResponse
+		inviteUser(email: String!): User!
 		uploadImage(
 			id: ID!
 			fileName: String!
@@ -60,14 +61,13 @@ module.exports = gql`
 		): SignedURL
         saveTour(id: ID!): [Tour]!
         removeSavedTour(id: ID!): [Tour]!
+		intentTourPayment(tourOrderInput: TourOrderInput!): PaymentIntention!
 	}
-    
 	
 	type SignedURL {
 		url: String
 		key: String
 	}
-	
 	scalar Upload
 	type Subscription {
 		messageAdded(convId: ID!): Message

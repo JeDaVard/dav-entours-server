@@ -1,6 +1,6 @@
 const { ApolloServer } = require('apollo-server-express');
-const { root, me, tour, conversation } = require('./')
-const { rootSchema, meSchema, userSchema, tourSchema, reviewSchema, conversationSchema } = require('./')
+const { root, me, tour, conversation, order } = require('./')
+const { rootSchema, meSchema, userSchema, tourSchema, reviewSchema, conversationSchema, orderSchema } = require('./')
 const AppError = require('../utils/appError');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
@@ -9,8 +9,8 @@ const { makeExecutableSchema } = require('graphql-tools');
 
 
 const executableSchema = makeExecutableSchema({
-    typeDefs: [rootSchema, meSchema, userSchema, tourSchema, reviewSchema, conversationSchema],
-    resolvers: [root, me, tour, conversation],
+    typeDefs: [rootSchema, meSchema, userSchema, tourSchema, reviewSchema, conversationSchema, orderSchema],
+    resolvers: [root, me, tour, conversation, order],
 });
 
 // const schema = mergeSchemas({
@@ -73,9 +73,9 @@ const server = new ApolloServer({
             // console.log('disconnected')
         },
     },
-    engine: {
-        apiKey: process.env.APOLLO_ANALYTICS_API_KEY,
-    }
+    // engine: {
+    //     apiKey: process.env.APOLLO_ANALYTICS_API_KEY,
+    // }
 });
 
 module.exports = server

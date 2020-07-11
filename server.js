@@ -33,9 +33,13 @@ server.applyMiddleware({ app, cors });
 const httpServer = createServer(app);
 server.installSubscriptionHandlers(httpServer)
 
-// Error middleware
-app.all('*', (req, res, next) => {
-    next(new AppError('Not found!', 404));
+// Any route middleware
+app.all('*', async (req, res, next) => {
+    try {
+        res.redirect(process.env.CLIENT)
+    } catch (e) {
+        next(new AppError('Not found!', 404));
+    }
 });
 
 mongoose

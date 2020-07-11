@@ -35,6 +35,7 @@ module.exports = {
             parent => Review.find({author: parent._id}).sort('-createdAt')),
     },
     Mutation: {
+        inviteUser: async (_, { email }) => await User.findOne({email}),
         login: async (_, args, c) => await authLogin(args),
         signUp: async (_, args) => await authSignUp(args),
         uploadImage: async (_, { id, fileName, contentType, genre }, c) => {
