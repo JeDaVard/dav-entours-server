@@ -10,21 +10,19 @@ const app = express();
 // app.use(cors());
 
 //// MIDDLEWARE \\\\
-// SECURITY
-//Implementing cors
-//Access-Control-Allow-Origin
-// app.use((req, res, next) => {
-//     res.setHeader('Access-Control-Allow-Origin', '*');
-    // res.setHeader(
-    //     'Access-Control-Allow-Methods',
-    //     'OPTIONS, GET, POST, PUT, PATCH, DELETE'
-    // );
-    // res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-//     next();
-// });
 // MAIN
 app.use(cookieParser());
-app.use(express.json({ limit: '20kb' }));
+app.use(express.json({
+    limit: '20kb',
+    //this is for req.rowBody in stripe webhooks
+    verify: function(req, res, buf) {
+        const url = req.originalUrl;
+        console.log(url)
+        if (url.startsWith('/webhooks/stripe')) {
+            req.rawBody = buf.toString()
+        }
+    }
+}));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(express.static(path.join(__dirname, 'static')));
 
