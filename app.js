@@ -1,4 +1,5 @@
 const express = require('express');
+const compression = require('compression')
 const path = require('path');
 const webhooks = require('./services/webhooks')
 // const cors = require('cors');
@@ -12,6 +13,7 @@ const app = express();
 //// MIDDLEWARE \\\\
 // MAIN
 app.use(cookieParser());
+app.use(compression());
 app.use(express.json({
     limit: '20kb',
     //this is for req.rowBody in stripe webhooks
