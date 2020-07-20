@@ -29,17 +29,6 @@ app.use(express.static(path.join(__dirname, 'static')));
 
 app.use('/webhooks', webhooks);
 
-app.post('/ping',async (req, res) => {
-    try {
-        const links = await req.body;
-
-        console.log(links, req.headers.autorization);
-        res.status(200).end();
-    } catch (e) {
-        console.log(e);
-    }
-})
-
 app.use(errorController);
 
 
