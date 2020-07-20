@@ -29,6 +29,10 @@ app.use(express.static(path.join(__dirname, 'static')));
 
 app.use('/webhooks', webhooks);
 
+app.get('/ping', async (req, res) => {
+    res.status(200).send('PONG')
+})
+
 app.use(errorController);
 
 
