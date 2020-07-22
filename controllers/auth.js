@@ -6,7 +6,7 @@ const AppError = require('../utils/appError');
 exports.setCookies = (res, authData, invalidate) => {
     const options = {
         httpOnly: true,
-        sameSite: 'None',
+        sameSite: 'Lax',
         domain: 'entours.app',
         secure: process.env.NODE_ENV === 'production',
         expires: invalidate

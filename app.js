@@ -32,7 +32,8 @@ app.use('/webhooks', webhooks);
 app.get('/ping', async (req, res) => {
     res.cookie('asd', 'dsa', {
         // httpOnly: true,
-        domain: 'entours.app'
+        // domain: 'entours.app',
+        sameSite: 'Lax'
     })
     res.status(200).send('PONG')
 })
