@@ -33,6 +33,12 @@ const startSchema = new mongoose.Schema({
 //     this.populate('participants tour staff')
 // })
 
+startSchema.pre('save', async function (next) {
+    const tour = await Tour.findOne({_id: this.tour});
+    this.staff = [tour.author, ...tour.guides]
+    next()
+})
+
 const Start = mongoose.model('start', startSchema)
 
 module.exports = Start

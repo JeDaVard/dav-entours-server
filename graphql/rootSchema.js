@@ -42,9 +42,11 @@ module.exports = gql`
 		): TourMutationResponse
 		tourDetails(
 			id: ID!
+			firstMessage: String
 			summary: String
 			description: String
 		): TourMutationResponse
+		manageStart(id: ID! date: Date startId: String ): TourMutationResponse
 		tourLocations(id: ID locations: [LocationInput]): TourMutationResponse
 		tourGallery(
             id: ID!

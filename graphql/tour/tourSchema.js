@@ -30,6 +30,7 @@ module.exports = gql`
 		reviews(page: Int, limit: Int): ReviewsResponse
 		slug: ID!
 		hashtags: [String]
+		firstMessage: String
 		summary: String
 		description: String
 		imageCover: String

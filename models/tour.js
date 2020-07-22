@@ -37,6 +37,10 @@ const tourSchema = new mongoose.Schema(
                 // unique: [true, 'You can\'t participate twice at a same time, please, choose another date or invite the second participant']
             }
         ],
+        firstMessage: {
+            type: String,
+            required: [true, 'Tour must have first message text for clients']
+        },
         summary: {
             type: String,
             trim: true,

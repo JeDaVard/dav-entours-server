@@ -1,8 +1,6 @@
 const {asyncPaginated} = require("../../utils/catchAsyncResolver");
 const {deleteObjects} = require("../../services/s3");
-const { PubSub, withFilter } = require('apollo-server-express');
-
-const pubsub = new PubSub();
+const { pubsub } = require('../pubsub');
 
 const { User, Tour, Message, Start} = require('../../models')
 const { catchAsyncResolver } = require('../../utils/catchAsyncResolver');
@@ -67,6 +65,11 @@ module.exports = {
             subscribe: (_, { convId }, c, info) => {
                 return pubsub.asyncIterator(`CONVERSATION_${convId}`)
             }
-        }
+        },
+        // newConversation: {
+        //     subscribe: (_, { convId }, c, info) => {
+        //         return pubsub.asyncIterator(`CONVERSATION_${convId}`)
+        //     }
+        // }
     },
 };

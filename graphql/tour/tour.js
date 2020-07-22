@@ -1,3 +1,4 @@
+const {manageStart} = require("../../services/start/manageStart");
 const {asyncPaginated} = require("../../utils/catchAsyncResolver");
 const {catchAsyncResolver} = require("../../utils/catchAsyncResolver");
 const { User, Tour, Review, Start } = require('../../models');
@@ -49,13 +50,21 @@ module.exports = {
                 return tour
             }),
         tourDetails: catchAsyncResolver(
-            async (_, { id, description, summary }, c) => {
+            async (_, { id, description, summary, firstMessage }, c) => {
                 const options = {
+                    firstMessage,
                     summary,
                     description
                 }
 
                 return await Tour.findOneAndUpdate({_id: id, author: c.user._id}, options, {new: true})
+            }),
+        manageStart: catchAsyncResolver(
+            async (_, { id, date, startId }, c) => {
+                await Tour.findOne({_id: id, author: c.user._id});
+                await manageStart(date, startId, id);
+
+                return await Tour.findOne({_id: id})
             }),
         tourGallery: catchAsyncResolver(
             async (_, { id, imageCover, images, removeImage }, c) => {
