@@ -35,11 +35,12 @@ server.installSubscriptionHandlers(httpServer)
 
 // Any route middleware
 app.all('*', async (req, res, next) => {
-    try {
-        res.redirect(process.env.CLIENT)
-    } catch (e) {
-        next(new AppError('Not found!', 404));
-    }
+    // try {
+    //     res.redirect(process.env.CLIENT)
+    // } catch (e) {
+    //     next(new AppError('Not found!', 404));
+    // }
+    res.status(403).send('My custom error')
 });
 
 mongoose
