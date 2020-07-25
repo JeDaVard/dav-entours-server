@@ -14,6 +14,7 @@ const cors = {
             if (process.env.NODE_ENV === 'development') return callback(null, true);
             const whitelist = [
                 process.env.CLIENT,
+                'http://localhost:3000'
             ];
 
             if (whitelist.indexOf(origin) !== -1) {
