@@ -58,6 +58,7 @@ const server = new ApolloServer({
                 const token = connectionParams.authorization && connectionParams.authorization.startsWith('Bearer')
                     ? connectionParams.authorization.split(' ')[1]
                     : null;
+                if (!token) return;
 
                 const decoded = await jwt.verify(token, process.env.JWT_SECRET, (e, payload) => e || payload);
 
