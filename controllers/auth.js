@@ -7,7 +7,7 @@ exports.setCookies = (res, authData, invalidate) => {
     const options = {
         httpOnly: true,
         sameSite: 'Lax',
-        domain: 'entours.app',
+        domain: process.env.NODE_ENV === 'production' ? 'entours.app' : 'localhost',
         secure: process.env.NODE_ENV === 'production',
         expires: invalidate
             ? new Date(Date.now() + 2000)
