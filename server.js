@@ -8,20 +8,13 @@ const AppError = require('./utils/appError');
 const redis = require('./services/redis');
 
 
-const fs = require('fs');
-
-fs.readFile('/Untitled.json', ((err, data) => {
-    console.log(data)
-}))
-
 const cors = {
         credentials: true,
         origin: (origin, callback) => {
             if (process.env.NODE_ENV === 'development') return callback(null, true);
             const whitelist = [
                 process.env.CLIENT,
-                'http://localhost:3000',
-                'https://2f817f79932b.ngrok.io'
+                'http://localhost:3000'
             ];
 
             if (whitelist.indexOf(origin) !== -1) {

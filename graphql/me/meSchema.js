@@ -23,6 +23,8 @@ module.exports = gql`
 		conversation(id: ID!, page: Int, limit: Int): Conversation
 		saved: [Tour]!
 		myTour(slug: String!): Tour
+		orders: [Order]!
+        pastOrders: [Order]!
 		draft: [Tour]!
 	}
 	input LoginInput {

@@ -1,4 +1,5 @@
-const {catchAsyncResolver} = require("../../utils/catchAsyncResolver");
+const {findOrders} = require("../../services/order/orders");
+const { catchAsyncResolver } = require("../../utils/catchAsyncResolver");
 const { User, Tour, Conversation, Review, Start } = require('../../models')
 const { authLogin, authSignUp, setCookies } = require('../../controllers/auth');
 
@@ -21,6 +22,8 @@ module.exports = {
             const starts = await Start.find({$or: [{staff: {$in: c.user._id}}, { participants: {$in: c.user._id}}]})
             return await Conversation.find({start: {$in: starts.map(start => start._id)}})
         },
+        orders: async (_, __, c) => await findOrders(c.user._id),
+        pastOrders: async (_, __, c) => await findOrders(c.user._id, true),
         conversation: async (_, { id }) => await Conversation.findOne({ _id: id }),
     },
     Mutation: {

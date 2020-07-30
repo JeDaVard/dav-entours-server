@@ -27,7 +27,7 @@ const catchAsyncResolver = (
 }
 
 // Use as a sync function, call synchronously to get a query
-// Otherwise it returns a promise a resolves so you get Mongoose docs instead
+// Otherwise it returns a promise and resolves so you get Mongoose docs instead
 const asyncPaginated = ( model, resolver ) => {
     return async (parent, args, context, info) => {
         try {

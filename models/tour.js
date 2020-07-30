@@ -39,7 +39,6 @@ const tourSchema = new mongoose.Schema(
         ],
         firstMessage: {
             type: String,
-            required: [true, 'Tour must have first message text for clients']
         },
         summary: {
             type: String,

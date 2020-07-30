@@ -3,9 +3,13 @@ const { Start, Conversation, Message, Tour } = require('../../models');
 async function manageStart(date, startId, tourId) {
     let start;
     if (date) {
-        start = await Start.create({date, tour: tourId})
-        const conversation = await Conversation.create({start: start._id, tour: tourId})
         const tour = await Tour.findById(tourId);
+        start = await Start.create({
+            date,
+            tour: tourId,
+            end: new Date(date) + tour.duration * 84600000
+        })
+        const conversation = await Conversation.create({start: start._id, tour: tourId})
         const message = await Message.create({
             conversation: conversation._id,
             text: tour.firstMessage,

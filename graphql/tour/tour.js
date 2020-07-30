@@ -46,7 +46,9 @@ module.exports = {
             }),
         tourLocations: catchAsyncResolver(
             async (_, { id, locations }, c) => {
-                const tour = await Tour.findOneAndUpdate({ _id: id, author: c.user._id }, { locations }, {new: true})
+                const tour = await Tour.findOne({ _id: id, author: c.user._id });
+                tour.locations = locations;
+                await tour.save();
                 return tour
             }),
         tourDetails: catchAsyncResolver(

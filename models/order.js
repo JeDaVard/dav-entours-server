@@ -25,6 +25,15 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: [true, 'Order must have a price']
     },
+    end: {
+        type: Date,
+        required: [true, 'Order must have an end time']
+    },
+    ended: {
+        type: Boolean,
+        required: [true, 'Order must specify if its ended or not'],
+        default: false
+    },
     invited: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -35,6 +44,10 @@ const orderSchema = new mongoose.Schema({
     timestamps: true
 })
 
-const Order = mongoose.model('order', orderSchema)
+// orderSchema.pre('save', async function() {
+//     const start = await Start.findOne({_id: this.start})
+// })
+
+const Order = mongoose.model('order', orderSchema);
 
 module.exports = Order

@@ -2,15 +2,17 @@ const { Order, Start, Conversation, Message} = require("../../models");
 const { pubsub } = require('../../graphql/pubsub');
 
 async function createOrder(amount, { tour, buyer, start, invited, firstMessage }) {
+    const tourStart = await Start.findOne({ _id: start });
+
     const order = await Order.create({
         tour,
         buyer,
         start,
+        end: tourStart.end,
         amount: amount / 100,
         invited: invited ? invited.split(',') : []
     });
 
-    const tourStart = await Start.findOne({ _id: start });
     await tourStart.participants.push(buyer);
     await tourStart.save();
 

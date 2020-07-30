@@ -23,7 +23,15 @@ const startSchema = new mongoose.Schema({
         ref: 'Tour',
         required: [true, 'Start date must belong to a tour']
     },
-
+    end: {
+        type: Date,
+        required: [true, 'Start must have an end time']
+    },
+    ended: {
+        type: Boolean,
+        required: [true, 'Order must specify if its ended or not'],
+        default: false
+    }
 },
 {
     timestamps: true

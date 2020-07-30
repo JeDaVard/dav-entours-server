@@ -11,4 +11,12 @@ module.exports = gql`
 		publicKey: String
 		clientSecret: String!
     }
+	type Order {
+		_id: ID!
+		tour: Tour!
+		buyer: User!
+		start: Start!
+		amount: Int!
+		invited: [User]!
+	}
 `;
