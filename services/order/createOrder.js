@@ -4,16 +4,18 @@ const { pubsub } = require('../../graphql/pubsub');
 async function createOrder(amount, { tour, buyer, start, invited, firstMessage }) {
     const tourStart = await Start.findOne({ _id: start });
 
-    const order = await Order.create({
+    const options = {
         tour,
         buyer,
         start,
         end: tourStart.end,
         amount: amount / 100,
         invited: invited ? invited.split(',') : []
-    });
+    };
+    await Order.create(options);
 
-    await tourStart.participants.push(buyer);
+    tourStart.participants = [...tourStart.participants, buyer, ...options.invited];
+    console.log(tourStart.participants)
     await tourStart.save();
 
     const conversation = await Conversation.findOne({start});

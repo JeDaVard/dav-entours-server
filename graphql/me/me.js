@@ -22,7 +22,7 @@ module.exports = {
             const starts = await Start.find({$or: [{staff: {$in: c.user._id}}, { participants: {$in: c.user._id}}]})
             return await Conversation.find({start: {$in: starts.map(start => start._id)}})
         },
-        orders: async (_, __, c) => await findOrders(c.user._id),
+        orders: async (_, __, c) => await findOrders(c.user._id, false),
         pastOrders: async (_, __, c) => await findOrders(c.user._id, true),
         conversation: async (_, { id }) => await Conversation.findOne({ _id: id }),
     },

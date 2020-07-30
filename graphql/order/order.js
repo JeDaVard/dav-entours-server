@@ -1,3 +1,5 @@
+const {catchAsyncResolver} = require("../../utils/catchAsyncResolver");
+const {cancelOrder} = require("../../services/order/cancelOrder");
 const { createTourIntent } = require("../../services/paymentIntention");
 const { User, Tour, Start } = require('../../models')
 
@@ -18,6 +20,7 @@ module.exports = {
                 firstMessage,
                 invitedIds
             })
-        }
+        },
+        cancelOrder: catchAsyncResolver(async (_, { id }, c ) => await cancelOrder(c.user._id, id))
     }
 }

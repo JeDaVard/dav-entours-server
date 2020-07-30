@@ -1,6 +1,13 @@
 const { gql } = require('apollo-server-express');
 
 module.exports = gql`
+	type OrderMutationResponse implements MutationResponse {
+		code: String!
+		success: Boolean!
+		message: String!
+		data: [Order]!
+	}
+	
 	input TourOrderInput {
 		tourId: String!
         startId: String!

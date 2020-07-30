@@ -63,6 +63,7 @@ module.exports = gql`
 		): SignedURL
         saveTour(id: ID!): [Tour]!
         removeSavedTour(id: ID!): [Tour]!
+		cancelOrder(id: ID!): OrderMutationResponse!
 		intentTourPayment(tourOrderInput: TourOrderInput!): PaymentIntention!
 	}
 	
