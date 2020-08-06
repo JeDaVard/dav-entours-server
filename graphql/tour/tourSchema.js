@@ -48,6 +48,7 @@ module.exports = gql`
 		startLocation: Location
 		locations: [Location]
 		draft: Boolean
+		distance: Float
 	}
 	type Location {
 		_id: ID

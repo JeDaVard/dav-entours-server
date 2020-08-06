@@ -3,6 +3,7 @@ const { Tour } = require('../../models');
 async function findRecommendTours() {
     const tours = await Tour.aggregate([
         { $sample: { size: 8 } },
+        { $match: { draft: false }}
     ])
     return tours
 }
@@ -21,12 +22,17 @@ async function searchTours(initInput) {
     const nearAggregation = Tour.aggregate([
         {
             $geoNear: {
-                near: { type: 'Point', coordinates: [coordinates[0] * 1, coordinates[1] * 1] },
+                near: { type: 'Point', coordinates: [coordinates[1] * 1, coordinates[0] * 1] },
                 distanceField: 'distance',
                 distanceMultiplier: multiplier,
                 maxDistance: 2000 / multiplier,
                 spherical: true,
                 includeLocs: "dist.location",
+            }
+        },
+        {
+            $match: {
+                draft: false
             }
         },
         {

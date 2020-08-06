@@ -53,7 +53,34 @@ const asyncPaginated = ( model, resolver ) => {
     }
 }
 
+const simpleAsyncPaginated = resolver => {
+    return async (parent, args, context, info) => {
+        try {
+            const result = await resolver(parent, args, context, info);
+
+            return {
+                total: result.total,
+                hasMore: result.hasNextPage,
+                hasPrev: result.hasPrevPage,
+                limit: result.limit,
+                page: result.page,
+                totalPages: result.totalPages,
+                pagingCounter: result.pagingCounter,
+                prevPage: result.prevPage,
+                nextPage: result.nextPage,
+                data: result.docs
+            }
+        } catch (e) {
+            throw new ApolloError(
+                (process.env.NODE_ENV === 'development') ? e.message : 'Oops.. Something went wrong'
+                , '500'
+            )
+        }
+    }
+}
+
 module.exports = {
     catchAsyncResolver,
-    asyncPaginated
+    asyncPaginated,
+    simpleAsyncPaginated
 }
