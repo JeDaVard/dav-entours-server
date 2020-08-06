@@ -12,21 +12,29 @@ module.exports = gql`
 		nextPage: Int
 		total: Int
 	}
-    type SearchResult {
-        result: [Tour]!
-        recommend: [Tour]!
+    type SearchData {
+		search: [Tour]!
+		recommended: [Tour]!
     }
     type SearchPaginatedResponse implements PaginatedResponse{
 		hasMore: Boolean
+		hasPrevPage: Boolean
 		nextPage: Int
+		prevPage: Int
 		total: Int
-        data: SearchResult
+        page: Int
+		limit: Int
+		pagingCounter: Int
+		totalPages: Int
+        data: SearchData!
     }
 	input SearchInput {
 		coordinates: String!
 		dates: String!
 		participants: Int!
 		maxGroupSize: Int!
+        page: Int
+        limit: Int
 	}
 	type Query {
 		users: [User]

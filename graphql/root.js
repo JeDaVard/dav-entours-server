@@ -1,4 +1,4 @@
-const { tourSearchResult } = require("../services/search/tourSearch");
+const { searchTours, findRecommendTours } = require("../services/search/tourSearch");
 const { asyncPaginated } = require("../utils/catchAsyncResolver");
 const { GraphQLScalarType } = require('graphql')
 const { Kind } = require('graphql/language');
@@ -12,7 +12,26 @@ module.exports = {
     Query: {
         users: async () => await User.find().sort('-createdAt').limit(4),
         user: async (_, { id }) => await User.findOne({_id: id}),
-        search: async (_, { initInput }) => await tourSearchResult(initInput)
+        search: async (_, { initInput }) => {
+            const recommended = await findRecommendTours();
+            const result = await searchTours(initInput);
+
+            return {
+                total: result.total,
+                hasMore: result.hasNextPage,
+                hasPrev: result.hasPrevPage,
+                limit: result.limit,
+                page: result.page,
+                totalPages: result.totalPages,
+                pagingCounter: result.pagingCounter,
+                prevPage: result.prevPage,
+                nextPage: result.nextPage,
+                data: {
+                    search: result.docs,
+                    recommended
+                }
+            }
+        }
     },
     MutationResponse: {
         // this is because of a strange requirement of graphql apollo
