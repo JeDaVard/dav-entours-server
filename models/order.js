@@ -48,6 +48,6 @@ const orderSchema = new mongoose.Schema({
 //     const start = await Start.findOne({_id: this.start})
 // })
 
-const Order = mongoose.model('order', orderSchema);
+const Order = mongoose.model('Order', orderSchema);
 
 module.exports = Order

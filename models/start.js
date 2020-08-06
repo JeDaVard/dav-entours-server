@@ -12,6 +12,10 @@ const startSchema = new mongoose.Schema({
             ref: 'User',
         },
     ],
+    participantsCount: {
+        type: Number,
+        default: 0
+    },
     staff: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -43,10 +47,14 @@ const startSchema = new mongoose.Schema({
 
 startSchema.pre('save', async function (next) {
     const tour = await Tour.findOne({_id: this.tour});
-    this.staff = [tour.author, ...tour.guides]
+    this.staff = [tour.author, ...tour.guides];
+
+    this.participantsCount = this.participants.length;
+    console.log(this.participantsCount)
+    console.log(this.participants.length)
     next()
 })
 
-const Start = mongoose.model('start', startSchema)
+const Start = mongoose.model('Start', startSchema)
 
 module.exports = Start

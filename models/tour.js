@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const aggregatePaginate = require('mongoose-aggregate-paginate-v2');
 const _ = require('lodash');
 // const User = require('./user');
 
@@ -84,7 +85,12 @@ const tourSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
-        startDates: [Date],
+        starts: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Start'
+            }
+        ],
         startLocation: {
             // GeoJSON
             type: {
@@ -128,6 +134,8 @@ const tourSchema = new mongoose.Schema(
     }
 );
 
+tourSchema.plugin(aggregatePaginate)
+
 // For example when we search we receive a result of 3 documents, but mongo actually examine all documents, or let's
 //    say more then we need, but when we set an index for a specific field, mongo does less queries
 //    that's the theory, well said by Jonas, but I tried and I am guessing this new mongo isn't as stupid as before,
@@ -138,8 +146,10 @@ const tourSchema = new mongoose.Schema(
 //    a lot of queries, for ex. 7q. for 1 doc, it's too much. And unfortunately the stuff down here did not help
 //    So, future me, hope you resolved this in the future projects.
 tourSchema.index({ price: 1, ratingsAverage: -1 });
-tourSchema.index({slug: 1});
+tourSchema.index({ slug: 1 });
 tourSchema.index({ startLocation: '2dsphere' });
+tourSchema.index({ locations: '2dsphere' });
+tourSchema.index({ starts: 1 });
 
 // tourSchema.pre(/^find/, function (next) {
 //     // "populate" means when we request it finds each guide by ObjectId located in the 'guides' array

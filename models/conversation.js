@@ -23,6 +23,6 @@ const conversationSchema = new mongoose.Schema({
 //     this.populate('start tour')
 // })
 
-const Conversation = mongoose.model('conversation', conversationSchema)
+const Conversation = mongoose.model('Conversation', conversationSchema)
 
 module.exports = Conversation

@@ -25,6 +25,6 @@ const messageSchema = new mongoose.Schema({
 
 messageSchema.plugin(mongoosePaginate)
 
-const Message = mongoose.model('message', messageSchema)
+const Message = mongoose.model('Message', messageSchema)
 
 module.exports = Message

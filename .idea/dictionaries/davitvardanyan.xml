@@ -9,6 +9,7 @@
       <w>flushall</w>
       <w>graphiql</w>
       <w>multer</w>
+      <w>nearsphere</w>
       <w>pubsub</w>
       <w>slugify</w>
       <w>webhook</w>
