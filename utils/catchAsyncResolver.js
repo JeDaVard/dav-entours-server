@@ -59,9 +59,9 @@ const simpleAsyncPaginated = resolver => {
             const result = await resolver(parent, args, context, info);
 
             return {
-                total: result.total,
+                total: result.totalDocs,
                 hasMore: result.hasNextPage,
-                hasPrev: result.hasPrevPage,
+                hasPrevPage: result.hasPrevPage,
                 limit: result.limit,
                 page: result.page,
                 totalPages: result.totalPages,
