@@ -19,7 +19,7 @@ async function searchTours(initInput) {
     const unit = 'km';
     const multiplier = unit === 'mi' ? 0.000621371 : 0.001;
 
-    const nearAggregation = Tour.aggregate([
+    const pipeline = [
         {
             $geoNear: {
                 near: { type: 'Point', coordinates: [coordinates[1] * 1, coordinates[0] * 1] },
@@ -80,15 +80,14 @@ async function searchTours(initInput) {
                 }
             }
         },
-    ])
+    ]
 
-
+    const nearAggregation = Tour.aggregate(pipeline)
     const options = {
         page: page || 1,
         limit: limit || 8
     };
 
-    // return Tour.aggregatePaginate(nearAggregation, options);
     return Tour.aggregatePaginate(nearAggregation, options);
 }
 
