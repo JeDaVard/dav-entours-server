@@ -50,8 +50,6 @@ startSchema.pre('save', async function (next) {
     this.staff = [tour.author, ...tour.guides];
 
     this.participantsCount = this.participants.length;
-    console.log(this.participantsCount)
-    console.log(this.participants.length)
     next()
 })
 

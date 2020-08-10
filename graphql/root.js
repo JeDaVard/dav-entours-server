@@ -4,7 +4,6 @@ const { GraphQLScalarType } = require('graphql')
 const { Kind } = require('graphql/language');
 
 const { User, Tour, Review, Start } = require('../models/')
-const { authLogin, authSignUp } = require('../controllers/auth');
 
 const { s3 } = require('../services/s3')
 
@@ -39,8 +38,6 @@ module.exports = {
     },
     Mutation: {
         inviteUser: async (_, { email }) => await User.findOne({email}),
-        login: async (_, args, c) => await authLogin(args),
-        signUp: async (_, args) => await authSignUp(args),
         uploadImage: async (_, { id, fileName, contentType, genre }, c) => {
             const key = `users/${c.user._id}/${genre}/${id}/${fileName}`
 

@@ -1,8 +1,8 @@
 const {findOrders} = require("../../services/order/orders");
 const { catchAsyncResolver } = require("../../utils/catchAsyncResolver");
 const { User, Tour, Conversation, Review, Start } = require('../../models')
-const { authLogin, authSignUp, setCookies } = require('../../controllers/auth');
-
+const { authLogin, authSignUp } = require('../../services/auth/auth');
+const { setCookies } = require('../../services/auth/cookies')
 
 module.exports = {
     Query: {
