@@ -67,7 +67,7 @@ const server = new ApolloServer({
                     user
                 }
             } catch (e) {
-                return new AppError('Some error while authenticate in WS')
+                throw new AppError('Some error while authenticate in WS')
             }
         },
         onDisconnect: (webSocket, context) => {

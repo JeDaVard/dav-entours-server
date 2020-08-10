@@ -3,13 +3,13 @@ const { User } = require('../../models');
 const AppError = require('../../utils/appError');
 
 const authLogin = async ({email, password}) => {
-    if (!email) return new AppError(`Please, provide your email`, 400)
-    if (!password) return new AppError(`Please, provide your password`, 400)
+    if (!email) throw new AppError(`Please, provide your email`, 400)
+    if (!password) throw new AppError(`Please, provide your password`, 400)
 
     const user = await User.findOne({ email }).select('+password');
-    if (!user) return new AppError(`We don't have account associated with ${email}`, 404)
+    if (!user) throw new AppError(`Account with ${email} doesn't exist`, 404)
     const passwordMatch = await user.correctPassword(password, user.password);
-    if (!passwordMatch) return new AppError(`Incorrect password`, 403);
+    if (!passwordMatch) throw new AppError(`Incorrect password`, 403);
 
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -29,9 +29,9 @@ const authLogin = async ({email, password}) => {
 
 const authSignUp = async (args) => {
     const { name, email, password } = args;
-    if (!name) return new AppError(`Please, provide your full name`, 400)
-    if (!email) return new AppError(`Please, provide your email`, 400)
-    if (!password) return new AppError(`Please, provide your password`, 400)
+    if (!name) throw new AppError(`Please, provide your full name`, 400)
+    if (!email) throw new AppError(`Please, provide your email`, 400)
+    if (!password) throw new AppError(`Please, provide your password`, 400)
 
     const user = await User.create({
         name,

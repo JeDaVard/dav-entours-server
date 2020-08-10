@@ -15,13 +15,17 @@ const catchAsyncResolver = (
                 code,
                 success: true,
                 message,
-                data
+                data,
+                error: null,
             }
-        } catch (e) {
-            throw new ApolloError(
-                !(process.env.NODE_ENV === 'development') ? errorMessage : e.message
-                , errorCode
-            )
+        } catch ({code, success, message, data, isOperational}) {
+            return {
+                code: code || errorCode,
+                success,
+                message: message || errorMessage,
+                data: null,
+                isOperational
+            }
         }
     }
 }

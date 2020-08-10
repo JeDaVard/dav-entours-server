@@ -27,16 +27,20 @@ module.exports = {
         conversation: async (_, { id }) => await Conversation.findOne({ _id: id }),
     },
     Mutation: {
-        login: async (_, args, c) => {
-            const authData = await authLogin(args)
-            setCookies(c.res, authData)
-            return authData.user
-        },
-        signUp: async (_, args, c) => {
-            const authData = await authSignUp(args)
-            setCookies(c.res, authData)
-            return authData.user
-        },
+        login: catchAsyncResolver(
+            async (_, args, c) => {
+                const authData = await authLogin(args)
+                setCookies(c.res, authData)
+                return authData.user
+            }
+        ),
+        signUp: catchAsyncResolver(
+            async (_, args, c) => {
+                const authData = await authSignUp(args)
+                setCookies(c.res, authData)
+                return authData.user
+            }
+        ),
         signOut: async (_, __, c) => {
             setCookies(c.res, null, true)
             return null

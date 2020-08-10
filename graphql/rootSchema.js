@@ -24,6 +24,13 @@ module.exports = gql`
 		totalPages: Int
         data: [Tour]!
     }
+	type AuthMutationResponse implements MutationResponse {
+		code: String!
+		success: Boolean!
+		message: String!
+		data: Me
+		isOperational: Boolean
+	}
 	input SearchInput {
 		coordinates: String!
 		dates: String!
@@ -45,8 +52,8 @@ module.exports = gql`
 		me: MeMutationResponse
 		sendMessage(convId: ID!, text: String! isImage:Boolean): MessageMutationResponse
 		removeMessage(id: ID! key: String): MessageMutationResponse
-		login(email: String!, password: String!): Me!
-		signUp(email: String!, password: String!, name: String!): Me!
+		login(email: String!, password: String!): AuthMutationResponse!
+		signUp(email: String!, password: String!, name: String!): AuthMutationResponse!
 		signOut: String
 		makeATour(
 			name: String!
