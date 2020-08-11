@@ -17,7 +17,13 @@ function deleteObjects(removeImage) {
             {Key: removeImage},
             {Key: removeImage.slice(0, removeImage.length - 4)+'.large.jpg'},
             ]
-        : [ {Key: removeImage} ];
+        : removeImage.includes('/avatar/')
+            ? [
+                {Key: removeImage.slice(0, removeImage.length - 4)+'.medium.jpg'},
+                {Key: removeImage},
+                {Key: removeImage.slice(0, removeImage.length - 4)+'.large.jpg'},
+            ]
+             : [ {Key: removeImage} ];
 
     s3.deleteObjects({ Bucket: process.env.AWS_ENTOURS_CDN_BUCKET, Delete: { Objects }
     }, (e,r) => {

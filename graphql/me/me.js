@@ -1,3 +1,4 @@
+const {changeAvatar} = require("../../services/account/profile");
 const {findOrders} = require("../../services/order/orders");
 const { catchAsyncResolver } = require("../../utils/catchAsyncResolver");
 const { User, Tour, Conversation, Review, Start } = require('../../models')
@@ -35,10 +36,7 @@ module.exports = {
             }
         ),
         updateProfile: catchAsyncResolver(
-            async (_, args, c) => await User.findByIdAndUpdate(
-                {_id: c.user._id},
-                {photo: args.photo},
-                {new: true})
+            async (_, args, c) => changeAvatar(c.user._id, args.photo)
         ),
         signUp: catchAsyncResolver(
             async (_, args, c) => {
