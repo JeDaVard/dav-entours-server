@@ -34,6 +34,12 @@ module.exports = {
                 return authData.user
             }
         ),
+        updateProfile: catchAsyncResolver(
+            async (_, args, c) => await User.findByIdAndUpdate(
+                {_id: c.user._id},
+                {photo: args.photo},
+                {new: true})
+        ),
         signUp: catchAsyncResolver(
             async (_, args, c) => {
                 const authData = await authSignUp(args)

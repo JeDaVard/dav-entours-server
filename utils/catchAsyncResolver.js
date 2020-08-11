@@ -18,13 +18,17 @@ const catchAsyncResolver = (
                 data,
                 error: null,
             }
-        } catch ({code, success, message, data, isOperational}) {
+        } catch (error) {
+            let customMessage = message || errorMessage
+
+            if (error.code === 11000) customMessage = 'Already exists';
+
             return {
-                code: code || errorCode,
-                success,
-                message: message || errorMessage,
+                code: error.code || errorCode,
+                success: error.success || false,
+                message: customMessage,
                 data: null,
-                isOperational
+                isOperational: error.isOperational || true
             }
         }
     }

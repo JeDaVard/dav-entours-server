@@ -39,7 +39,9 @@ module.exports = {
     Mutation: {
         inviteUser: async (_, { email }) => await User.findOne({email}),
         uploadImage: async (_, { id, fileName, contentType, genre }, c) => {
-            const key = `users/${c.user._id}/${genre}/${id}/${fileName}`
+            let key = `users/${c.user._id}/${genre}/${id}/${fileName}`;
+
+            if (genre === 'avatar') key = `users/${c.user._id}/${genre}/${fileName}`;
 
             const url = await s3.getSignedUrl('putObject', {
                 Bucket: process.env.AWS_ENTOURS_BUCKET,
@@ -51,7 +53,7 @@ module.exports = {
                 url,
                 key
             }
-        }
+        },
     },
     Subscription: {
         ////

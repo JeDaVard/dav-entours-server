@@ -31,6 +31,13 @@ module.exports = gql`
 		data: Me
 		isOperational: Boolean
 	}
+	type ProfileMutationResponse implements MutationResponse {
+		code: String!
+		success: Boolean!
+		message: String!
+		data: Me
+		isOperational: Boolean
+	}
 	input SearchInput {
 		coordinates: String!
 		dates: String!
@@ -90,6 +97,7 @@ module.exports = gql`
 			genre: String!
 		): SignedURL
         saveTour(id: ID!): [Tour]!
+		updateProfile(photo: String): ProfileMutationResponse!
         removeSavedTour(id: ID!): [Tour]!
 		cancelOrder(id: ID!): OrderMutationResponse!
 		intentTourPayment(tourOrderInput: TourOrderInput!): PaymentIntention!
