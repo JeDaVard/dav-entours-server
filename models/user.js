@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
         },
         photo: {
             type: String,
-            default: 'default.jpg',
+            default: 'assets/icons/default.svg',
         },
         reviews: {
             type: [mongoose.Schema.Types.ObjectId],
