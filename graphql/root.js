@@ -9,7 +9,7 @@ const { s3 } = require('../services/s3')
 
 module.exports = {
     Query: {
-        users: async () => await User.find().sort('-createdAt').limit(4),
+        users: async () => await User.find().sort('-createdAt'),
         user: async (_, { id }) => await User.findOne({_id: id}),
         recommended: async () => await findRecommendTours(),
         search: simpleAsyncPaginated(async (_, { initInput }) => await searchTours(initInput))

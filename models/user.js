@@ -39,6 +39,11 @@ const userSchema = new mongoose.Schema(
             enum: ['user', 'guide', 'admin'],
             default: 'user',
         },
+        gender: {
+            type: String,
+            enum: ['Male', 'Female', 'Not specified'],
+            default: 'Not specified',
+        },
         speaks: {
             type: [String],
             default: ['Not specified'],

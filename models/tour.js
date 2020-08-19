@@ -31,13 +31,6 @@ const tourSchema = new mongoose.Schema(
             unique: true
         },
         hashtags: [String],
-        participants: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'User',
-                // unique: [true, 'You can\'t participate twice at a same time, please, choose another date or invite the second participant']
-            }
-        ],
         firstMessage: {
             type: String,
         },
@@ -85,12 +78,6 @@ const tourSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
-        starts: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Start'
-            }
-        ],
         startLocation: {
             // GeoJSON
             type: {

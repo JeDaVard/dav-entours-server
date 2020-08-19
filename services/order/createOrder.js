@@ -15,7 +15,6 @@ async function createOrder(amount, { tour, buyer, start, invited, firstMessage }
     await Order.create(options);
 
     tourStart.participants = [...tourStart.participants, buyer, ...options.invited];
-    console.log(tourStart.participants)
     await tourStart.save();
 
     const conversation = await Conversation.findOne({start});

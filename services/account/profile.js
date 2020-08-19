@@ -4,7 +4,7 @@ const { User } = require('../../models');
 async function changeAvatar(_id, photo) {
     const user = await User.findById(_id);
 
-    if (!photo.endsWith('.svg')) {
+    if (user.photo && !user.photo.toString().includes('default')) {
         await deleteObjects(user.photo.toString());
     }
 
