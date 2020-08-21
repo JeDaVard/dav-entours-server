@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const aggregatePaginate = require('mongoose-aggregate-paginate-v2');
+const mongoosePaginate = require('mongoose-paginate-v2');
 const _ = require('lodash');
 // const User = require('./user');
 
@@ -207,6 +208,8 @@ tourSchema.pre('find', function (next) {
 //
 //     next()
 // })
+
+tourSchema.plugin(mongoosePaginate)
 
 const Tour = mongoose.model('Tour', tourSchema);
 

@@ -8,7 +8,7 @@ const { deleteObjects } = require('../../services/s3');
 module.exports = {
     Query: {
         tours: async () => {
-            const tours = await Tour.find().sort('-createdAt')
+            const tours = await Tour.find().sort('-createdAt').limit(8)
             return tours
         },
         tour: async (_, { id }) => await Tour.findOne({ slug: id }),
