@@ -6,7 +6,11 @@ const authLogin = async ({email, password}) => {
     if (!email) throw new AppError(`Please, provide your email`, 400)
     if (!password) throw new AppError(`Please, provide your password`, 400)
 
-    const user = await User.findOne({ email }).select('+password');
+    let user = await User.findOne({ email }).select('+password');
+    if (!user) {
+        await User.updateOne({email}, {active: true}).select('+password');
+        user = await User.findOne({ email }).select('+password');
+    }
     if (!user) throw new AppError(`Account with ${email} doesn't exist`, 404)
     const passwordMatch = await user.correctPassword(password, user.password);
     if (!passwordMatch) throw new AppError(`Incorrect password`, 403);

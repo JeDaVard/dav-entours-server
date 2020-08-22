@@ -1,3 +1,4 @@
+const {deactivateMe} = require("../../services/account/profile");
 const {changeAvatar} = require("../../services/account/profile");
 const {findOrders} = require("../../services/order/orders");
 const { catchAsyncResolver } = require("../../utils/catchAsyncResolver");
@@ -61,6 +62,11 @@ module.exports = {
             user.saved = user.saved.filter(tour => tour.toString() !== id);
             await user.save();
             return await Tour.find({_id: {$in: user.saved}});
+        },
+        deactivate: async (_, __, c) => {
+            await deactivateMe(c.user._id);
+            setCookies(c.res, null, true)
+            return null
         }
     },
 };

@@ -16,7 +16,9 @@ const setCookies = (res, authData, invalidate) => {
 
     res.cookie('authToken', authData ? authData.token : '', options )
     res.cookie('exp', authData ? authData.expires : '', options )
-    // res.cookie('userId', authData ? authData.user._id.toString() : '', nameOptions )
+    if (!authData) {
+        res.cookie('userId', '', options )
+    }
 }
 
 module.exports = {

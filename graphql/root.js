@@ -53,7 +53,7 @@ module.exports = {
                 url,
                 key
             }
-        },
+        }
     },
     Subscription: {
         ////

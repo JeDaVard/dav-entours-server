@@ -14,13 +14,14 @@ function deleteObjects(removeImage) {
     const Objects = removeImage.includes('/tours/')
         ? [
             {Key: removeImage.slice(0, removeImage.length - 4)+'.thumb.jpg'},
+            {Key: removeImage.slice(0, removeImage.length - 4)+'.small.jpg'},
             {Key: removeImage},
             {Key: removeImage.slice(0, removeImage.length - 4)+'.large.jpg'},
             ]
         : removeImage.includes('/avatar/')
             ? [
-                {Key: removeImage.slice(0, removeImage.length - 4)+'.medium.jpg'},
                 {Key: removeImage},
+                {Key: removeImage.slice(0, removeImage.length - 4)+'.medium.jpg'},
                 {Key: removeImage.slice(0, removeImage.length - 4)+'.large.jpg'},
             ]
              : [ {Key: removeImage} ];

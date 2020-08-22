@@ -14,6 +14,11 @@ async function changeAvatar(_id, photo) {
     return user
 }
 
+async function deactivateMe(_id) {
+    return await User.findByIdAndUpdate({_id}, { active: false })
+}
+
 module.exports = {
-    changeAvatar
+    changeAvatar,
+    deactivateMe
 }
