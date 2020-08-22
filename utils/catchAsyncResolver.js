@@ -19,6 +19,7 @@ const catchAsyncResolver = (
                 error: null,
             }
         } catch (error) {
+
             let customMessage = error.message || errorMessage
 
             if (error.code === 11000) customMessage = 'Already exists';

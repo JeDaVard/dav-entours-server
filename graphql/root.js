@@ -1,7 +1,9 @@
+const {catchAsyncResolver} = require("../utils/catchAsyncResolver");
 const { simpleAsyncPaginated, asyncPaginated } = require("../utils/catchAsyncResolver");
 const { searchTours, findRecommendTours } = require("../services/search/tourSearch");
 const { GraphQLScalarType } = require('graphql')
 const { Kind } = require('graphql/language');
+const AppError = require('../utils/appError');
 
 const { User, Tour, Review, Start } = require('../models/')
 
@@ -37,7 +39,14 @@ module.exports = {
             parent => Review.find({author: parent._id}).sort('-createdAt')),
     },
     Mutation: {
-        inviteUser: async (_, { email }) => await User.findOne({email}),
+        inviteUser: catchAsyncResolver(
+            async (_, { email }) => {
+                const user = await User.findOne({email});
+                if (!user) {
+                    throw new AppError('Account does\'n exist, please invite a registered user', 404)
+                }
+                return user
+            }),
         uploadImage: async (_, { id, fileName, contentType, genre }, c) => {
             let key = `users/${c.user._id}/${genre}/${id}/${fileName}`;
 

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Tour = require('./tour');
 const Conversation = require('./conversation')
+const Message = require('./message')
 
 const startSchema = new mongoose.Schema({
     date: {
@@ -30,7 +31,7 @@ const startSchema = new mongoose.Schema({
     },
     end: {
         type: Date,
-        required: [true, 'Start must have an end time']
+        // required: [true, 'Start must have an end time']
     },
     ended: {
         type: Boolean,

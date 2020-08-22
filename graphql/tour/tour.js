@@ -52,11 +52,12 @@ module.exports = {
                 return tour
             }),
         tourDetails: catchAsyncResolver(
-            async (_, { id, description, summary, firstMessage }, c) => {
+            async (_, { id, description, summary, firstMessage, guides }, c) => {
                 const options = {
                     firstMessage,
                     summary,
-                    description
+                    description,
+                    guides
                 }
 
                 return await Tour.findOneAndUpdate({_id: id, author: c.user._id}, options, {new: true})

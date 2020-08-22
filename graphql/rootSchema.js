@@ -38,6 +38,12 @@ module.exports = gql`
 		data: Me
 		isOperational: Boolean
 	}
+	type InviteMutationResponse implements MutationResponse {
+		code: String!
+		success: Boolean!
+		message: String!
+		data: User
+	}
 	input SearchInput {
 		coordinates: String!
 		dates: String!
@@ -80,6 +86,7 @@ module.exports = gql`
 			firstMessage: String
 			summary: String
 			description: String
+			guides: [String]!
 		): TourMutationResponse
 		manageStart(id: ID! date: Date startId: String ): TourMutationResponse
 		tourLocations(id: ID locations: [LocationInput]): TourMutationResponse
@@ -89,7 +96,7 @@ module.exports = gql`
             images: [String]!
             removeImage: String
         ): TourMutationResponse
-		inviteUser(email: String!): User!
+		inviteUser(email: String!): InviteMutationResponse!
 		uploadImage(
 			id: ID!
 			fileName: String!
