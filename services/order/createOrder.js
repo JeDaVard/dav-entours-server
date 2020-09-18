@@ -17,7 +17,17 @@ async function createOrder(amount, { tour, buyer, start, invited, firstMessage }
     tourStart.participants = [...tourStart.participants, buyer, ...options.invited];
     await tourStart.save();
 
-    const conversation = await Conversation.findOne({start});
+    let conversation = await Conversation.findOne({start});
+
+
+    // This is because of devdata import err, but the error lies at start models(pre('save')), so now it's fixed.
+    // I did a mistake
+    // and set the the tour id to conv "start", the statement
+    // below will be removed, if we reImport dev data for starts collection to reCreate conv.s
+    if (!conversation) {
+        conversation = await Conversation.findOne({start: tour});
+    }
+
     const message = await Message.create({
         sender: buyer,
         conversation: conversation._id,
