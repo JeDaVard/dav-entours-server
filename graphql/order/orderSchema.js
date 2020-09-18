@@ -20,6 +20,7 @@ module.exports = gql`
     }
 	type Order {
 		_id: ID!
+		createdAt: Date
 		tour: Tour!
 		buyer: User!
 		start: Start!
