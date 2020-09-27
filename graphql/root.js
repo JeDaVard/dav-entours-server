@@ -7,7 +7,7 @@ const AppError = require('../utils/appError');
 
 const { User, Tour, Review, Start } = require('../models/')
 
-const { s3 } = require('../services/s3')
+const { s3 } = require('../loaders/s3')
 
 module.exports = {
     Query: {

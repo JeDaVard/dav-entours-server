@@ -1,4 +1,4 @@
-const {deleteObjects} = require("../s3");
+const {deleteObjects} = require("../../loaders/s3");
 const { User } = require('../../models');
 
 async function changeAvatar(_id, photo) {

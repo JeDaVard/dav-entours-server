@@ -1,11 +1,11 @@
 const dotenv = require('dotenv');
 dotenv.config({ path: './config/config.env' });
 const { createServer } = require('http');
-const mongoose = require('./services/mongoose');
+const mongoose = require('./loaders/mongoose');
 const app = require('./app');
 const server = require('./graphql')
 const AppError = require('./utils/appError');
-const redis = require('./services/redis');
+const redis = require('./loaders/redis');
 
 
 const cors = {

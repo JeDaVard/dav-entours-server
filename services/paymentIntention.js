@@ -1,4 +1,4 @@
-const stripe = require('./stripe')
+const stripe = require('../loaders/stripe')
 const { Tour, User } = require('../models')
 
 

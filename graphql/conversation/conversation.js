@@ -1,5 +1,5 @@
 const {asyncPaginated} = require("../../utils/catchAsyncResolver");
-const {deleteObjects} = require("../../services/s3");
+const {deleteObjects} = require("../../loaders/s3");
 const { pubsub } = require('../pubsub');
 
 const { User, Tour, Message, Start} = require('../../models')

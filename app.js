@@ -1,7 +1,7 @@
 const express = require('express');
 const compression = require('compression')
 const path = require('path');
-const webhooks = require('./services/webhooks')
+const webhooks = require('./loaders/webhooks')
 // const cors = require('cors');
 const errorController = require('./middleware/error');
 const cookieParser = require('cookie-parser');

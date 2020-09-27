@@ -2,7 +2,7 @@ const {manageStart} = require("../../services/start/manageStart");
 const {asyncPaginated} = require("../../utils/catchAsyncResolver");
 const {catchAsyncResolver} = require("../../utils/catchAsyncResolver");
 const { User, Tour, Review, Start } = require('../../models');
-const { deleteObjects } = require('../../services/s3');
+const { deleteObjects } = require('../../loaders/s3');
 
 
 module.exports = {
